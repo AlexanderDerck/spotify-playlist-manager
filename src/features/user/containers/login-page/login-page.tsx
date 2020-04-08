@@ -1,3 +1,4 @@
+import { Button, Typography } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { authorize } from '../../store';
@@ -9,9 +10,10 @@ export interface LoginPageProps extends DispatchProps {}
 
 const LoginPage: React.FunctionComponent<LoginPageProps> = ({ authorize }) => (
   <div>
-    <button className="btn btn-primary" onClick={() => authorize()}>
+    <Typography.Title>Nieuwe gebruiker</Typography.Title>
+    <Button type="primary" onClick={() => authorize()}>
       Authorize
-    </button>
+    </Button>
   </div>
 );
 
