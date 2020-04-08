@@ -3,14 +3,16 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { authorize } from '../../store';
 
+const { Title } = Typography;
+
+export interface AuthenticationPageProps extends DispatchProps {}
 interface DispatchProps {
   authorize: () => void;
 }
-export interface LoginPageProps extends DispatchProps {}
 
-const LoginPage: React.FunctionComponent<LoginPageProps> = ({ authorize }) => (
+const AuthenticationPage: React.FunctionComponent<AuthenticationPageProps> = ({ authorize }) => (
   <div>
-    <Typography.Title>Nieuwe gebruiker</Typography.Title>
+    <Title>Nieuwe gebruiker</Title>
     <Button type="primary" onClick={() => authorize()}>
       Authorize
     </Button>
@@ -20,4 +22,4 @@ const LoginPage: React.FunctionComponent<LoginPageProps> = ({ authorize }) => (
 const mapDispatch: DispatchProps = {
   authorize: authorize,
 };
-export default connect(() => ({}), mapDispatch)(LoginPage);
+export default connect(() => ({}), mapDispatch)(AuthenticationPage);
