@@ -1,5 +1,6 @@
 import { Epic, ofType } from 'redux-observable';
-import { tap, map } from 'rxjs/operators';
+import { NEVER } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   UserAction,
   authorize,
@@ -23,10 +24,10 @@ export const checkAuthorizationEpic: Epic<UserAction, UserAction, RootState> = (
     })
   );
 
-export const authorizeEpic: Epic<UserAction> = (action$) =>
+export const authorizeEpic: Epic<UserAction, any> = (action$) =>
   action$.pipe(
     ofType(authorize.type),
-    tap((_) => {
+    map((_) => {
       const queryParams = new URLSearchParams({
         client_id: '17df0cd526354633a5ab47045e8efa8c',
         response_type: 'token',
@@ -34,6 +35,8 @@ export const authorizeEpic: Epic<UserAction> = (action$) =>
       });
 
       window.location.replace('https://accounts.spotify.com/authorize?' + queryParams.toString());
+
+      return NEVER;
     })
   );
 
