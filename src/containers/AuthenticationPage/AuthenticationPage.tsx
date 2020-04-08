@@ -1,7 +1,7 @@
 import { Button, Typography } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { authorize } from '../../store';
+import { authorize } from '../../store/user';
 
 const { Title } = Typography;
 

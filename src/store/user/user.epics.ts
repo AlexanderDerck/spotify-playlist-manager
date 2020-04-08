@@ -8,9 +8,8 @@ import {
   checkAuthorizationUserLoggedIn,
   checkAuthorizationUserNotLoggedIn,
 } from './user.actions';
-import { RootState } from '../../../store/root-state';
 
-export const checkAuthorizationEpic: Epic<UserAction, UserAction, RootState> = (action$, state$) =>
+export const checkAuthorizationEpic: Epic<UserAction, UserAction> = (action$) =>
   action$.pipe(
     ofType(checkAuthorization.type),
     map((_) => {
@@ -32,6 +31,7 @@ export const authorizeEpic: Epic<UserAction, any> = (action$) =>
         client_id: '17df0cd526354633a5ab47045e8efa8c',
         response_type: 'token',
         redirect_uri: 'https://10.63.1.202:3000',
+        scope: 'playlist-modify-private',
       });
 
       window.location.replace('https://accounts.spotify.com/authorize?' + queryParams.toString());

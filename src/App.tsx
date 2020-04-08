@@ -2,7 +2,7 @@ import { Col, Layout, Row, Typography } from 'antd';
 import React from 'react';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import { PrivateRoute } from './containers';
-import AuthenticationPage from './features/user/containers/AuthenticationPage/AuthenticationPage';
+import { AuthenticationPage } from './containers';
 
 const { Header, Content } = Layout;
 const { Text } = Typography;
