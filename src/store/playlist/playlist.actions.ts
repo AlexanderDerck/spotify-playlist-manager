@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
-import { Playlist } from '../../models';
+import { Playlist, Track } from '../../models';
 import { actionTypes, createErrorAction, props } from '../utils';
 
 export const loadPlaylists = createAction('[Playlist] Load playlists');
@@ -11,6 +11,9 @@ export const loadPlaylistsAdditionalPagesSuccess = createAction(
   props<{ playLists: Playlist[] }>()
 );
 export const loadPlaylistsAdditionalPagesError = createErrorAction('[Playlist] Load playlists additional pages error');
+export const loadPlaylistTracks = createAction('[Playlists] Load playlist tracks', props<{ playlistId: string }>());
+export const loadPlaylistTracksSuccess = createAction('[Playlists] Load playlist tracks success', props<{ playlistId: string; tracks: Track[] }>());
+export const loadPlaylistTracksError = createErrorAction('[Playlists] Load playlist tracks error');
 
 const actionCreatorMap = {
   loadPlaylists,
@@ -19,6 +22,9 @@ const actionCreatorMap = {
   loadPlaylistsAdditionalPages,
   loadPlaylistsAdditionalPagesSuccess,
   loadPlaylistsAdditionalPagesError,
+  loadPlaylistTracks,
+  loadPlaylistTracksSuccess,
+  loadPlaylistTracksError,
 };
 const all = actionTypes(actionCreatorMap);
 export type PlaylistAction = typeof all;
