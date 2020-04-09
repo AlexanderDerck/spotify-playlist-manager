@@ -24,7 +24,6 @@ export class ManagePlaylistsPage extends React.Component<ManagePlaylistsPageProp
 
   componentDidMount() {
     this.loadPlaylists();
-    this.loadPlaylistTracks({ playlistId: '3WGhwW6dixRn4IPmPhPMHi' });
   }
 
   render() {
