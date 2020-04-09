@@ -1,5 +1,8 @@
 {
   "editor.formatOnSave": true,
   "typescript.preferences.quoteStyle": "single",
-  "prettier.singleQuote": true
+  "prettier.singleQuote": true,
+  "importSorter.generalConfiguration.sortOnBeforeSave": true,
+  "importSorter.sortConfiguration.customOrderingRules.defaultNumberOfEmptyLinesAfterGroup": 0,
+  "importSorter.sortConfiguration.removeUnusedImports": true
 }

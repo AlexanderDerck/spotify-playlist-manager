@@ -46,9 +46,6 @@
       "last 1 safari version"
     ]
   },
-  "vsc-organize-imports": {
-    "emptyLinesBetweenFilledGroups": 0
-  },
   "devDependencies": {
     "redux-devtools": "^3.5.0"
   }
