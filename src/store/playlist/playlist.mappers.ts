@@ -1,5 +1,8 @@
-import { Playlist, SpotifyImage, Track } from '../../models';
-import { PlaylistObjectSimplified, PlaylistTrackObject } from '../../typings/spotify-api';
+import { Album, Artist, Playlist, SpotifyImage, Track } from '../../models';
+import {
+    AlbumObjectSimplified, ArtistObjectSimplified, ImageObject, PlaylistObjectSimplified,
+    PlaylistTrackObject
+} from '../../typings/spotify-api';
 
 export function mapToPlaylist(playlistResponse: PlaylistObjectSimplified): Playlist {
   return {
@@ -7,11 +10,7 @@ export function mapToPlaylist(playlistResponse: PlaylistObjectSimplified): Playl
     name: playlistResponse.name,
     ownerUserId: playlistResponse.owner.id,
     totalTracks: playlistResponse.tracks.total,
-    coverImages: playlistResponse.images.map<SpotifyImage>((image) => ({
-      url: image.url,
-      height: image.height,
-      width: image.width,
-    })),
+    images: playlistResponse.images.map(mapToImage),
     trackIds: null,
   };
 }
@@ -20,13 +19,30 @@ export function mapToTrack(trackResponse: PlaylistTrackObject): Track {
   return {
     id: trackResponse.track.id,
     name: trackResponse.track.name,
-    album: {
-      id: trackResponse.track.album.id,
-      name: trackResponse.track.album.name,
-    },
-    artists: trackResponse.track.artists.map((artist) => ({
-      id: artist.id,
-      name: artist.name,
-    })),
+    album: mapToAlbum(trackResponse.track.album),
+    artists: trackResponse.track.artists.map(mapToArtist),
+  };
+}
+
+export function mapToImage(image: ImageObject): SpotifyImage {
+  return {
+    url: image.url,
+    height: image.height,
+    width: image.width,
+  };
+}
+
+export function mapToAlbum(album: AlbumObjectSimplified): Album {
+  return {
+    id: album.id,
+    name: album.name,
+    images: album.images.map(mapToImage),
+  };
+}
+
+export function mapToArtist(artist: ArtistObjectSimplified): Artist {
+  return {
+    id: artist.id,
+    name: artist.name,
   };
 }

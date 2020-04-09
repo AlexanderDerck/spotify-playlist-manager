@@ -5,6 +5,6 @@ export interface Playlist {
   name: string;
   ownerUserId: string;
   totalTracks: number;
-  coverImages: SpotifyImage[];
   trackIds: string[];
+  images: SpotifyImage[];
 }
