@@ -1,18 +1,27 @@
 import { Col, Layout, Row, Typography } from 'antd';
 import React from 'react';
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
-import { PrivateRoute } from './containers';
-import { AuthenticationPage } from './containers';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import styles from './App.module.scss';
+import { AuthenticationPage, PrivateRoute } from './containers';
 
 const { Header, Content } = Layout;
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 export default function App() {
   return (
     <Router>
       <Layout>
         <Header>
-          <img width="200px" src="/Spotify_Logo_RGB_Green.png" alt="logo" />
+          <Row align="middle">
+            <Col>
+              <img width="200px" src="/Spotify_Logo_RGB_Green.png" alt="logo" />
+            </Col>
+            <Col>
+              <Title level={1} className={styles.title}>
+                Playlist Manager
+              </Title>
+            </Col>
+          </Row>
         </Header>
         <Content>
           <Row justify="center">
