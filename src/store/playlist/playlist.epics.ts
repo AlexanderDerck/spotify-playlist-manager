@@ -48,58 +48,6 @@ export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> =
     )
   );
 
-// export const loadPlaylistSuccessEpic: Epic<PlaylistAction> = (actions$) =>
-//   actions$.pipe(
-//     ofType(loadPlaylistsSuccess.type, loadPlaylistsAdditionalPagesSuccess.type),
-//     map((action) => {
-//       const playlistIds = action.payload.playLists.map((p) => p.id);
-
-//       return loadAllPlaylistTracksBecausePlaylistsLoaded({ playlistIds });
-//     })
-//   );
-
-// export const loadPlaylistTracksBecausePlaylistsLoadedEpic: Epic<
-//   PlaylistAction,
-//   PlaylistAction,
-//   RootState
-// > = (actions$, store$) =>
-//   actions$.pipe(
-//     ofType(loadPlaylistTracksBecausePlaylistsLoaded.type),
-//     withLatestFrom(store$.pipe(map(getBearerToken))),
-//     mergeMap(([action, bearerToken]) => {
-//       const loadTracksObservables = action.payload.playlistIds.map((playlistId) =>
-//         getPlaylistTracks(playlistId, bearerToken).pipe(
-//           map((tracksResponse) => createTuple(playlistId, tracksResponse))
-//         )
-//       );
-
-//       return forkJoin(loadTracksObservables);
-//     }),
-//     withLatestFrom(store$.pipe(map(getBearerToken))),
-//     /* We got the initial responses for all playlists, fetch additional
-//      * pages of tracks for playlists where necessary now */
-//     mergeMap(([responses, bearerToken]) =>
-//       forkJoin(
-//         responses.map(([playlistId, tracksResponse]) => {
-//           const loadAdditionalTracksObservables = new Array(
-//             Math.floor(tracksResponse.total / tracksResponse.limit)
-//           )
-//             .fill(null)
-//             .map((_, index) => getPlaylistTracks(playlistId, bearerToken, index * 100 + 100));
-//           loadAdditionalTracksObservables.unshift(of(tracksResponse));
-
-//           return forkJoin(loadAdditionalTracksObservables).pipe(
-//             map((responses) => responses.flatMap((r) => r.items).map((item) => mapToTrack(item))),
-//             map((tracks) => createTuple(playlistId, tracks))
-//           );
-//         })
-//       )
-//     ),
-//     map((tracksByPlaylistId) =>
-//       loadAllPlaylistTracksBecausePlaylistsLoadedSuccess({ tracksByPlaylistId })
-//     )
-//   );
-
 export const changeSelectedPlaylistIdsEpic: Epic<PlaylistAction> = (actions$) =>
   actions$.pipe(
     ofType(changeSelectedPlaylistIds.type),

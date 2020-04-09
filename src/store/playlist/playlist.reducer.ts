@@ -2,8 +2,7 @@ import { calculateTrackIdentifier } from '../../functions';
 import { Playlist, Track } from '../../models';
 import { toStringMap } from '../utils';
 import {
-    changeSelectedPlaylistIds, loadAllPlaylistTracksBecausePlaylistsLoadedSuccess,
-    loadPlaylistsSuccess, loadPlaylistTracksSuccess, PlaylistAction
+    changeSelectedPlaylistIds, loadPlaylistsSuccess, loadPlaylistTracksSuccess, PlaylistAction
 } from './playlist.actions';
 import { initialPlaylistState, PlaylistState } from './playlist.state';
 
@@ -25,13 +24,6 @@ export function playlistReducer(
         state,
         action.payload.playlistId,
         action.payload.tracks
-      );
-    case loadAllPlaylistTracksBecausePlaylistsLoadedSuccess.type:
-      // Basically the same as loadPlaylistTracksSuccess but for an array of playlist/tracks
-      return action.payload.tracksByPlaylistId.reduce(
-        (state, [playlistId, tracks]) =>
-          updateStateTracksFetchedForPlaylist(state, playlistId, tracks),
-        state
       );
     case changeSelectedPlaylistIds.type:
       return {
