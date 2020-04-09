@@ -16,7 +16,10 @@ export function playlistReducer(
     case loadPlaylistsAdditionalPagesSuccess.type:
       return {
         ...state,
-        playLists: toStringMap(action.payload.playLists, (playlist) => playlist.id),
+        playLists: toStringMap(
+          [...Object.values(state.playLists), ...action.payload.playLists],
+          (playlist) => playlist.id
+        ),
       };
     case loadPlaylistTracksSuccess.type:
       return updateStateTracksFetchedForPlaylist(
@@ -56,6 +59,6 @@ function updateStateTracksFetchedForPlaylist(
   return {
     ...state,
     playLists: { ...state.playLists, [updatedPlaylist.id]: updatedPlaylist },
-    tracks: toStringMap(tracks, calculateTrackIdentifier),
+    tracks: toStringMap([...Object.values(state.tracks), ...tracks], calculateTrackIdentifier),
   };
 }
