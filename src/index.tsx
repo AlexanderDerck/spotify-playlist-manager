@@ -4,8 +4,8 @@ import { Provider } from 'react-redux';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { store } from './store/store';
-import './index.scss';
 import { checkAuthorization } from './store/user';
+import './index.scss';
 
 store.dispatch(checkAuthorization());
 

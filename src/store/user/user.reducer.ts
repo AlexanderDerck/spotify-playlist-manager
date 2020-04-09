@@ -1,12 +1,21 @@
-import { UserAction, checkAuthorizationUserLoggedIn } from './user.actions';
+import {
+  checkAuthorizationAuthorized,
+  UserAction,
+  loadUserBecauseAuthorizedSuccess,
+} from './user.actions';
 import { initialUserState, UserState } from './user.state';
 
 export function userReducer(state = initialUserState, action: UserAction): UserState {
   switch (action.type) {
-    case checkAuthorizationUserLoggedIn.type:
+    case checkAuthorizationAuthorized.type:
       return {
         ...state,
-        accessToken: action.payload.accessToken,
+        accessToken: `Bearer ${action.payload.accessToken}`,
+      };
+    case loadUserBecauseAuthorizedSuccess.type:
+      return {
+        ...state,
+        user: action.payload.user,
       };
     default:
       return state;

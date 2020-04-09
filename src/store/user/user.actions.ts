@@ -1,16 +1,23 @@
 import { createAction } from '@reduxjs/toolkit';
-import { actionTypes, props } from '../../utils';
+import { User } from '../../models';
+import { actionTypes, createErrorAction, props } from '../../utils';
 
 export const authorize = createAction('[User] Authorize');
 export const checkAuthorization = createAction('[User] Check authorization');
-export const checkAuthorizationUserLoggedIn = createAction('[User] Check authorization, user logged in', props<{ accessToken: string }>());
-export const checkAuthorizationUserNotLoggedIn = createAction('[User] Check authorization, user not logged in');
+export const checkAuthorizationAuthorized = createAction('[User] Check authorization, authorized', props<{ accessToken: string }>());
+export const checkAuthorizationNotAuthorized = createAction('[User] Check authorization, not authorized');
+export const loadUserBecauseAuthorized = createAction('[User] Load user because authorized ');
+export const loadUserBecauseAuthorizedSuccess = createAction('[User] Load user because authorized, success', props<{ user: User }>());
+export const loadUserBecauseAuthorizedError = createErrorAction('[User] Load user because authorized, error');
 
 const actionCreatorMap = {
   authorize,
   checkAuthorization,
-  checkAuthorizationUserLoggedIn,
-  checkAuthorizationUserNotLoggedIn,
+  checkAuthorizationUserLoggedIn: checkAuthorizationAuthorized,
+  checkAuthorizationUserNotLoggedIn: checkAuthorizationNotAuthorized,
+  loadUserBecauseAuthorized,
+  loadUserBecauseAuthorizedSuccess,
+  loadUserBecauseAuthorizedError,
 };
 const all = actionTypes(actionCreatorMap);
 export type UserAction = typeof all;

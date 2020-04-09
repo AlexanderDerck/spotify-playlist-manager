@@ -1,4 +1,4 @@
-import { UserState, initialUserState } from './user/user.state';
+import { initialUserState, UserState } from './user/user.state';
 
 export interface RootState {
   user: UserState;

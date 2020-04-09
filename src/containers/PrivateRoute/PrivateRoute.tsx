@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
-import { getIsAuthenticated } from '../../store/user';
 import { RootState } from '../../store/root-state';
+import { getIsAuthenticated } from '../../store/user';
 
 export interface PrivateRouteProps extends RouteProps, StateProps {}
 interface StateProps {
