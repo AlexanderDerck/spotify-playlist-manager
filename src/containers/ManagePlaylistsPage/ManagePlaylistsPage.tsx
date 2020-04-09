@@ -1,9 +1,34 @@
+import { Typography } from 'antd';
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { loadPlaylists } from '../../store/playlist/playlist.actions';
 
-export interface ManagePlaylistsPageProps {}
+const { Text } = Typography;
 
-export const ManagePlaylistsPage: React.FunctionComponent<ManagePlaylistsPageProps> = (props) => (
-  <div></div>
-);
+export interface ManagePlaylistsPageProps extends DispatchProps {}
 
-export default ManagePlaylistsPage;
+export interface DispatchProps {
+  loadPlaylists: () => void;
+}
+
+export class ManagePlaylistsPage extends React.Component<ManagePlaylistsPageProps> {
+  loadPlaylists: () => void;
+
+  constructor(props: ManagePlaylistsPageProps) {
+    super(props);
+    this.loadPlaylists = props.loadPlaylists.bind(this);
+  }
+
+  componentDidMount() {
+    this.loadPlaylists();
+  }
+
+  render() {
+    return <Text>Authorized</Text>;
+  }
+}
+
+const mapDispatch: DispatchProps = {
+  loadPlaylists,
+};
+export default connect(null, mapDispatch)(ManagePlaylistsPage);

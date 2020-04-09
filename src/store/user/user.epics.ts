@@ -1,21 +1,16 @@
-import { CurrentUsersProfileResponse } from '../../typings';
 import { Epic, ofType } from 'redux-observable';
 import { NEVER, of } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
-import { catchError, map, switchMap } from 'rxjs/operators';
-import { User } from '../../models';
-import { withAccessToken } from '../../utils';
+import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { CurrentUsersProfileResponse } from '../../typings/spotify-api';
 import { RootState } from '../root-state';
 import {
-  authorize,
-  checkAuthorization,
-  checkAuthorizationAuthorized,
-  checkAuthorizationNotAuthorized,
-  loadUserBecauseAuthorized,
-  loadUserBecauseAuthorizedError,
-  UserAction,
-  loadUserBecauseAuthorizedSuccess,
+    authorize, checkAuthorization, checkAuthorizationAuthorized, checkAuthorizationNotAuthorized,
+    loadUserBecauseAuthorized, loadUserBecauseAuthorizedError, loadUserBecauseAuthorizedSuccess,
+    UserAction
 } from './user.actions';
+import { mapToUser } from './user.mappers';
+import { getBearerToken } from './user.selectors';
 
 export const checkAuthorizationEpic: Epic<UserAction, UserAction> = (action$) =>
   action$.pipe(
@@ -58,23 +53,14 @@ export const authorizeEpic: Epic<UserAction, any> = (action$) =>
 export const loadUserEpic: Epic<UserAction, UserAction, RootState> = (actions$, store$) =>
   actions$.pipe(
     ofType(loadUserBecauseAuthorized.type),
-    withAccessToken(store$),
-    switchMap(([_, accessToken]) =>
+    withLatestFrom(store$.pipe(map(getBearerToken))),
+    switchMap(([_, bearerToken]) =>
       ajax
-        .get('https://api.spotify.com/v1/me', {
-          authorization: accessToken,
+        .getJSON<CurrentUsersProfileResponse>('https://api.spotify.com/v1/me', {
+          authorization: bearerToken,
         })
         .pipe(
-          map((response) => response.response as CurrentUsersProfileResponse),
-          map((response) => {
-            const user: User = {
-              id: response.id,
-              email: response.email,
-              name: response.display_name,
-            };
-
-            return loadUserBecauseAuthorizedSuccess({ user });
-          }),
+          map((response) => loadUserBecauseAuthorizedSuccess({ user: mapToUser(response) })),
           catchError((error) => of(loadUserBecauseAuthorizedError({ error })))
         )
     )

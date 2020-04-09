@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 import { User } from '../../models';
-import { actionTypes, createErrorAction, props } from '../../utils';
+import { actionTypes, createErrorAction, props } from '../utils';
 
 export const authorize = createAction('[User] Authorize');
 export const checkAuthorization = createAction('[User] Check authorization');
