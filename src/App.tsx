@@ -2,10 +2,10 @@ import { Col, Layout, Row, Typography } from 'antd';
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import styles from './App.module.scss';
-import { AuthenticationPage, PrivateRoute } from './containers';
+import { AuthenticationPage, ManagePlaylistsPage, PrivateRoute } from './containers';
 
 const { Header, Content } = Layout;
-const { Text, Title } = Typography;
+const { Title } = Typography;
 
 export default function App() {
   return (
@@ -28,7 +28,7 @@ export default function App() {
             <Col span={18}>
               <Switch>
                 <PrivateRoute exact path="/">
-                  <Text>Authenticated</Text>
+                  <ManagePlaylistsPage></ManagePlaylistsPage>
                 </PrivateRoute>
                 <Route path="/authenticate">
                   <AuthenticationPage></AuthenticationPage>
