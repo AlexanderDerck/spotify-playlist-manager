@@ -13,7 +13,7 @@ import {
     loadPlaylistTracksSuccess, PlaylistAction
 } from './playlist.actions';
 import { mapToPlaylist, mapToTrack } from './playlist.mappers';
-import { getSelectedPlaylistIds } from './playlist.selectors';
+import { getSelectedPlaylistIdsWithoutTracksLoaded } from './playlist.selectors';
 
 const GET_PLAYLIST_LIMIT = 50;
 const GET_TRACKS_LIMIT = 100;
@@ -61,7 +61,7 @@ export const loadPlaylistTracksBecauseSelectedPlaylistsChangedEpic: Epic<
 > = (actions$, store$) =>
   actions$.pipe(
     ofType(loadPlaylistTracksBecauseSelectedPlaylistsChanged.type),
-    withLatestFrom(store$.pipe(map(getSelectedPlaylistIds))),
+    withLatestFrom(store$.pipe(map(getSelectedPlaylistIdsWithoutTracksLoaded))),
     mergeMap(([_, playlistIds]) =>
       playlistIds.map((playlistId) => loadPlaylistTracks({ playlistId }))
     )

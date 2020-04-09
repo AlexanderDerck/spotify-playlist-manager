@@ -12,7 +12,7 @@ export function mapToPlaylist(playlistResponse: PlaylistObjectSimplified): Playl
       height: image.height,
       width: image.width,
     })),
-    trackIds: [],
+    trackIds: null,
   };
 }
 

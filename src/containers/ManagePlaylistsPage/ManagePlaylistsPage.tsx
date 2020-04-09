@@ -2,6 +2,7 @@ import { Col, Row, Select, Typography } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
+import { TracksTable } from '../../components';
 import { Playlist, Track } from '../../models';
 import {
     getPlaylists, getSelectedPlaylistIds, getTracksForSelectedPlaylistIds
@@ -64,6 +65,11 @@ export class ManagePlaylistsPage extends React.Component<ManagePlaylistsPageProp
             >
               {playlistOptions}
             </Select>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <TracksTable tracks={this.props.tracksForSelectedPlaylist}></TracksTable>
           </Col>
         </Row>
       </React.Fragment>

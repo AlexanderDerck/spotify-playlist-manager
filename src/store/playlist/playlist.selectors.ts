@@ -13,18 +13,22 @@ export const getSelectedPlaylistIds = createSelector(
   (state) => state.selectedPlaylistIds
 );
 
-export const getTracks = createSelector(getPlaylistState, (state) => state.tracks);
-
 export const getSelectedPlaylists = createSelector(
   getPlaylistState,
   getSelectedPlaylistIds,
   (state, playlistIds) =>
     playlistIds.reduce<Playlist[]>(
-      (playlists, playlistId) =>
-        playlists.splice(playlists.length - 1, 0, state.playLists[playlistId]),
+      (playlists, playlistId) => [...playlists, state.playLists[playlistId]],
       []
     )
 );
+
+export const getSelectedPlaylistIdsWithoutTracksLoaded = createSelector(
+  getSelectedPlaylists,
+  (selectedPlaylists) => selectedPlaylists.filter((p) => p.trackIds === null).map((p) => p.id)
+);
+
+export const getTracks = createSelector(getPlaylistState, (state) => state.tracks);
 
 export const getTracksForSelectedPlaylistIds = createSelector(
   getSelectedPlaylists,

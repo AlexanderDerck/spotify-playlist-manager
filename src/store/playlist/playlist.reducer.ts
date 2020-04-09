@@ -44,8 +44,9 @@ function updateStateTracksFetchedForPlaylist(
   tracks: Track[]
 ) {
   const playlistToUpdate = state.playLists[playlistId];
-  const mergedTrackIds = playlistToUpdate.trackIds
-    .concat(tracks.map((t) => calculateTrackIdentifier(t)))
+  const mergedTrackIds = tracks
+    .map((t) => calculateTrackIdentifier(t))
+    .concat(playlistToUpdate.trackIds || [])
     .filter((value, index, self) => self.indexOf(value) === index); // Get unique values
   const updatedPlaylist: Playlist = {
     ...playlistToUpdate,
