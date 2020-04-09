@@ -2,8 +2,8 @@ import { calculateTrackIdentifier } from '../../functions';
 import { Playlist, Track } from '../../models';
 import { toStringMap } from '../utils';
 import {
-    loadPlaylistsAdditionalPagesSuccess, loadPlaylistsSuccess,
-    loadPlaylistTracksBecausePlaylistsLoadedSuccess, loadPlaylistTracksSuccess, PlaylistAction
+    changeSelectedPlaylistIds, loadAllPlaylistTracksBecausePlaylistsLoadedSuccess,
+    loadPlaylistsSuccess, loadPlaylistTracksSuccess, PlaylistAction
 } from './playlist.actions';
 import { initialPlaylistState, PlaylistState } from './playlist.state';
 
@@ -13,7 +13,6 @@ export function playlistReducer(
 ): PlaylistState {
   switch (action.type) {
     case loadPlaylistsSuccess.type:
-    case loadPlaylistsAdditionalPagesSuccess.type:
       return {
         ...state,
         playLists: toStringMap(
@@ -27,13 +26,18 @@ export function playlistReducer(
         action.payload.playlistId,
         action.payload.tracks
       );
-    case loadPlaylistTracksBecausePlaylistsLoadedSuccess.type:
+    case loadAllPlaylistTracksBecausePlaylistsLoadedSuccess.type:
       // Basically the same as loadPlaylistTracksSuccess but for an array of playlist/tracks
       return action.payload.tracksByPlaylistId.reduce(
         (state, [playlistId, tracks]) =>
           updateStateTracksFetchedForPlaylist(state, playlistId, tracks),
         state
       );
+    case changeSelectedPlaylistIds.type:
+      return {
+        ...state,
+        selectedPlaylistIds: action.payload.playlistIds,
+      };
     default:
       return state;
   }

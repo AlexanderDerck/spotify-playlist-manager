@@ -2,20 +2,21 @@ import { Epic, ofType } from 'redux-observable';
 import { forkJoin, Observable, of } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 import { catchError, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
-import { createTuple } from '../../functions';
 import {
     ListOfCurrentUsersPlaylistsResponse, PlaylistTrackResponse
 } from '../../typings/spotify-api';
 import { RootState } from '../root-state';
 import { getBearerToken } from '../user';
 import {
-    loadPlaylists, loadPlaylistsAdditionalPages, loadPlaylistsAdditionalPagesError,
-    loadPlaylistsAdditionalPagesSuccess, loadPlaylistsError, loadPlaylistsSuccess,
-    loadPlaylistTracks, loadPlaylistTracksBecausePlaylistsLoaded,
-    loadPlaylistTracksBecausePlaylistsLoadedSuccess, loadPlaylistTracksError,
+    changeSelectedPlaylistIds, loadPlaylists, loadPlaylistsError, loadPlaylistsSuccess,
+    loadPlaylistTracks, loadPlaylistTracksBecauseSelectedPlaylistsChanged, loadPlaylistTracksError,
     loadPlaylistTracksSuccess, PlaylistAction
 } from './playlist.actions';
 import { mapToPlaylist, mapToTrack } from './playlist.mappers';
+import { getSelectedPlaylistIds } from './playlist.selectors';
+
+const GET_PLAYLIST_LIMIT = 50;
+const GET_TRACKS_LIMIT = 100;
 
 export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> = (
   actions$,
@@ -27,88 +28,94 @@ export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> =
     switchMap(([_, bearerToken]) =>
       getListOfCurrentUsersPlaylists(bearerToken).pipe(
         switchMap((response) => {
-          const additionalLoadPlaylistActions = new Array(
-            Math.floor(response.total / response.limit)
-          )
+          const loadPlaylistsObservables = new Array(Math.floor(response.total / response.limit))
             .fill(null)
-            .map((_, index) => loadPlaylistsAdditionalPages({ offset: index * 50 + 50 }));
+            .map((_, index) =>
+              getListOfCurrentUsersPlaylists(
+                bearerToken,
+                index * GET_PLAYLIST_LIMIT + GET_PLAYLIST_LIMIT
+              )
+            );
+          loadPlaylistsObservables.unshift(of(response));
 
-          return [
-            loadPlaylistsSuccess({ playLists: response.items.map(mapToPlaylist) }),
-            ...additionalLoadPlaylistActions,
-          ];
+          return forkJoin(loadPlaylistsObservables);
         }),
+        map((responses) =>
+          loadPlaylistsSuccess({ playLists: responses.flatMap((r) => r.items).map(mapToPlaylist) })
+        ),
         catchError((error) => of(loadPlaylistsError({ error })))
       )
     )
   );
 
-export const loadPlaylistAdditionalPagesEpic: Epic<PlaylistAction, PlaylistAction, RootState> = (
-  action$,
-  store$
-) =>
-  action$.pipe(
-    ofType(loadPlaylistsAdditionalPages.type),
-    withLatestFrom(store$.pipe(map(getBearerToken))),
-    mergeMap(([action, bearerToken]) =>
-      getListOfCurrentUsersPlaylists(bearerToken, action.payload.offset).pipe(
-        map((response) =>
-          loadPlaylistsAdditionalPagesSuccess({ playLists: response.items.map(mapToPlaylist) })
-        ),
-        catchError((error) => of(loadPlaylistsAdditionalPagesError({ error })))
-      )
-    )
-  );
+// export const loadPlaylistSuccessEpic: Epic<PlaylistAction> = (actions$) =>
+//   actions$.pipe(
+//     ofType(loadPlaylistsSuccess.type, loadPlaylistsAdditionalPagesSuccess.type),
+//     map((action) => {
+//       const playlistIds = action.payload.playLists.map((p) => p.id);
 
-export const loadPlaylistSuccessEpic: Epic<PlaylistAction> = (actions$) =>
+//       return loadAllPlaylistTracksBecausePlaylistsLoaded({ playlistIds });
+//     })
+//   );
+
+// export const loadPlaylistTracksBecausePlaylistsLoadedEpic: Epic<
+//   PlaylistAction,
+//   PlaylistAction,
+//   RootState
+// > = (actions$, store$) =>
+//   actions$.pipe(
+//     ofType(loadPlaylistTracksBecausePlaylistsLoaded.type),
+//     withLatestFrom(store$.pipe(map(getBearerToken))),
+//     mergeMap(([action, bearerToken]) => {
+//       const loadTracksObservables = action.payload.playlistIds.map((playlistId) =>
+//         getPlaylistTracks(playlistId, bearerToken).pipe(
+//           map((tracksResponse) => createTuple(playlistId, tracksResponse))
+//         )
+//       );
+
+//       return forkJoin(loadTracksObservables);
+//     }),
+//     withLatestFrom(store$.pipe(map(getBearerToken))),
+//     /* We got the initial responses for all playlists, fetch additional
+//      * pages of tracks for playlists where necessary now */
+//     mergeMap(([responses, bearerToken]) =>
+//       forkJoin(
+//         responses.map(([playlistId, tracksResponse]) => {
+//           const loadAdditionalTracksObservables = new Array(
+//             Math.floor(tracksResponse.total / tracksResponse.limit)
+//           )
+//             .fill(null)
+//             .map((_, index) => getPlaylistTracks(playlistId, bearerToken, index * 100 + 100));
+//           loadAdditionalTracksObservables.unshift(of(tracksResponse));
+
+//           return forkJoin(loadAdditionalTracksObservables).pipe(
+//             map((responses) => responses.flatMap((r) => r.items).map((item) => mapToTrack(item))),
+//             map((tracks) => createTuple(playlistId, tracks))
+//           );
+//         })
+//       )
+//     ),
+//     map((tracksByPlaylistId) =>
+//       loadAllPlaylistTracksBecausePlaylistsLoadedSuccess({ tracksByPlaylistId })
+//     )
+//   );
+
+export const changeSelectedPlaylistIdsEpic: Epic<PlaylistAction> = (actions$) =>
   actions$.pipe(
-    ofType(loadPlaylistsSuccess.type, loadPlaylistsAdditionalPagesSuccess.type),
-    map((action) => {
-      const playlistIds = action.payload.playLists.map((p) => p.id);
-
-      return loadPlaylistTracksBecausePlaylistsLoaded({ playlistIds });
-    })
+    ofType(changeSelectedPlaylistIds.type),
+    map((_) => loadPlaylistTracksBecauseSelectedPlaylistsChanged())
   );
 
-export const loadPlaylistTracksBecausePlaylistsLoadedEpic: Epic<
+export const loadPlaylistTracksBecauseSelectedPlaylistsChangedEpic: Epic<
   PlaylistAction,
   PlaylistAction,
   RootState
 > = (actions$, store$) =>
   actions$.pipe(
-    ofType(loadPlaylistTracksBecausePlaylistsLoaded.type),
-    withLatestFrom(store$.pipe(map(getBearerToken))),
-    mergeMap(([action, bearerToken]) => {
-      const loadTracksObservables = action.payload.playlistIds.map((playlistId) =>
-        getPlaylistTracks(playlistId, bearerToken).pipe(
-          map((tracksResponse) => createTuple(playlistId, tracksResponse))
-        )
-      );
-
-      return forkJoin(loadTracksObservables);
-    }),
-    withLatestFrom(store$.pipe(map(getBearerToken))),
-    /* We got the initial responses for all playlists, fetch additional
-     * pages of tracks for playlists where necessary now */
-    mergeMap(([responses, bearerToken]) =>
-      forkJoin(
-        responses.map(([playlistId, tracksResponse]) => {
-          const loadAdditionalTracksObservables = new Array(
-            Math.floor(tracksResponse.total / tracksResponse.limit)
-          )
-            .fill(null)
-            .map((_, index) => getPlaylistTracks(playlistId, bearerToken, index * 100 + 100));
-          loadAdditionalTracksObservables.unshift(of(tracksResponse));
-
-          return forkJoin(loadAdditionalTracksObservables).pipe(
-            map((responses) => responses.flatMap((r) => r.items).map((item) => mapToTrack(item))),
-            map((tracks) => createTuple(playlistId, tracks))
-          );
-        })
-      )
-    ),
-    map((tracksByPlaylistId) =>
-      loadPlaylistTracksBecausePlaylistsLoadedSuccess({ tracksByPlaylistId })
+    ofType(loadPlaylistTracksBecauseSelectedPlaylistsChanged.type),
+    withLatestFrom(store$.pipe(map(getSelectedPlaylistIds))),
+    mergeMap(([_, playlistIds]) =>
+      playlistIds.map((playlistId) => loadPlaylistTracks({ playlistId }))
     )
   );
 
@@ -122,16 +129,18 @@ export const loadPlaylistTracksEpic: Epic<PlaylistAction, PlaylistAction, RootSt
     mergeMap(([action, bearerToken]) =>
       getPlaylistTracks(action.payload.playlistId, bearerToken).pipe(
         mergeMap((response) => {
-          const loadAdditionalTracksObservables = new Array(
-            Math.floor(response.total / response.limit)
-          )
+          const loadTracksObservables = new Array(Math.floor(response.total / response.limit))
             .fill(null)
             .map((_, index) =>
-              getPlaylistTracks(action.payload.playlistId, bearerToken, index * 100 + 100)
+              getPlaylistTracks(
+                action.payload.playlistId,
+                bearerToken,
+                index * GET_TRACKS_LIMIT + GET_TRACKS_LIMIT
+              )
             );
-          loadAdditionalTracksObservables.unshift(of(response));
+          loadTracksObservables.unshift(of(response));
 
-          return forkJoin(loadAdditionalTracksObservables);
+          return forkJoin(loadTracksObservables);
         }),
         map((responses) => {
           const flattenedTracks = responses.flatMap((response) => response.items);
@@ -150,7 +159,7 @@ export const loadPlaylistTracksEpic: Epic<PlaylistAction, PlaylistAction, RootSt
 function getListOfCurrentUsersPlaylists( bearerToken: string, offset: number = null): Observable<ListOfCurrentUsersPlaylistsResponse> {
   const url = 'https://api.spotify.com/v1/me/playlists?';
   const queryParams = new URLSearchParams({
-    'limit': '50'
+    'limit': GET_PLAYLIST_LIMIT.toString()
   });
 
   if (offset !== null) {
@@ -166,7 +175,7 @@ function getListOfCurrentUsersPlaylists( bearerToken: string, offset: number = n
 function getPlaylistTracks(playlistId: string, bearerToken: string, offset: number = null): Observable<PlaylistTrackResponse> {
   const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?`;
   const queryParams = new URLSearchParams({
-    'limit': '100',
+    'limit': GET_TRACKS_LIMIT.toString(),
     'fields': 'total,limit,items(track(id,name,album,artists))'
   });
 
