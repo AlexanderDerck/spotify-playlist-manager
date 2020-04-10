@@ -2,6 +2,7 @@ import { Avatar, Col, Row, Typography } from 'antd';
 import * as React from 'react';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { Playlist } from '../../models';
+import styles from './PlaylistTag.module.scss';
 
 const { Text } = Typography;
 
@@ -14,10 +15,12 @@ export const PlaylistTag: React.FunctionComponent<PlaylistTagProps> = ({ playlis
 
   return (
     <span className="ant-tag py-1 px-2">
-      <Row align="middle" gutter={8}>
+      <Row align="middle" gutter={8} className="flex-nowrap">
         <Col>{createAvatar(imageUrl)}</Col>
         <Col>
-          <Text strong={true}>{playlist.name}</Text>
+          <Text strong={true} ellipsis={true} className={styles.tagMaxWidth}>
+            {playlist.name}
+          </Text>
         </Col>
       </Row>
     </span>

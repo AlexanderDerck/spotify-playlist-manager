@@ -1,11 +1,11 @@
-import { Col, Layout, Menu, Row, Typography } from 'antd';
+import { Col, Layout, Menu, Row } from 'antd';
 import React from 'react';
 import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom';
 import styles from './App.module.scss';
-import { AuthenticationPage, ManagePlaylistsPage, PrivateRoute } from './containers';
+import { PageHeader } from './components';
+import { AuthenticationPage, PrivateRoute, TracksPage } from './containers';
 
 const { Header, Content, Sider } = Layout;
-const { Title } = Typography;
 const { Item } = Menu;
 
 export default function App() {
@@ -13,16 +13,7 @@ export default function App() {
     <Router>
       <Layout className={styles.pageHeight}>
         <Header>
-          <Row align="middle">
-            <Col>
-              <img width="200px" src="/Spotify_Logo_RGB_Green.png" alt="logo" />
-            </Col>
-            <Col>
-              <Title level={1} className={styles.title}>
-                Playlist Manager
-              </Title>
-            </Col>
-          </Row>
+          <PageHeader></PageHeader>
         </Header>
         <Layout>
           <Sider>
@@ -34,15 +25,15 @@ export default function App() {
               </Item>
             </Menu>
           </Sider>
-          <Content>
+          <Content className="py-4">
             <Row justify="center">
-              <Col span={18}>
+              <Col span={20}>
                 <Switch>
                   <PrivateRoute exact path="/">
-                    <ManagePlaylistsPage></ManagePlaylistsPage>
+                    <TracksPage></TracksPage>
                   </PrivateRoute>
                   <PrivateRoute path="/tracks">
-                    <ManagePlaylistsPage></ManagePlaylistsPage>
+                    <TracksPage></TracksPage>
                   </PrivateRoute>
                   <Route path="/authenticate">
                     <AuthenticationPage></AuthenticationPage>
