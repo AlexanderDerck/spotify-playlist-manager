@@ -1,15 +1,20 @@
 import { Table, Typography } from 'antd';
 import Column from 'antd/lib/table/Column';
 import * as React from 'react';
-import { Track } from '../../models';
+import { Playlist, Track } from '../../models';
+import { PlaylistTag } from '../PlaylistTag/PlaylistTag';
 
 const { Text } = Typography;
 
 export interface TracksTableProps {
   tracks: Track[];
+  selectedPlaylists: Playlist[];
 }
 
-export const TracksTable: React.FunctionComponent<TracksTableProps> = ({ tracks }) => {
+export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
+  tracks,
+  selectedPlaylists,
+}) => {
   const nameSorter = {
     compare: (a, b) => a.name.localeCompare(b.name),
     multiple: 1,
@@ -23,6 +28,8 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({ tracks 
     compare: (a, b) => a.album.name.localeCompare(b.album.name),
     multiple: 1,
   };
+  const playlistRenderer = (_, track: Track) =>
+    renderPlaylistTagsForTrack(track, selectedPlaylists);
 
   return (
     <Table dataSource={tracks} tableLayout="fixed" size="middle">
@@ -48,10 +55,17 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({ tracks 
         filterMultiple={false}
         sorter={albumSorter}
       ></Column>
+      <Column key="playlists" render={playlistRenderer}></Column>
     </Table>
   );
 };
 
 function getArtistNames(track: Track): string {
   return track.artists.map((a) => a.name).join(', ');
+}
+
+function renderPlaylistTagsForTrack(track: Track, playlists: Playlist[]): React.ReactElement[] {
+  return playlists
+    .filter((p) => p.trackIds !== null && p.trackIds.includes(track.id))
+    .map((playlist) => <PlaylistTag key={playlist.id} playlist={playlist}></PlaylistTag>);
 }
