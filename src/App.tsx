@@ -11,7 +11,7 @@ const { Item } = Menu;
 export default function App() {
   return (
     <Router>
-      <Layout>
+      <Layout className={styles.pageHeight}>
         <Header>
           <Row align="middle">
             <Col>

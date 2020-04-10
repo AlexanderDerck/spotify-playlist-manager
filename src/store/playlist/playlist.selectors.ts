@@ -35,7 +35,7 @@ export const getTracksForSelectedPlaylistIds = createSelector(
   getTracks,
   (playlists, tracks) => {
     const uniqueTracksById = playlists
-      .flatMap((p) => p.trackIds)
+      .flatMap((p) => p.trackIds || [])
       .reduce<{ [trackId: string]: Track }>(
         (tracksById, trackId) => ({ ...tracksById, [trackId]: tracks[trackId] }),
         {}
