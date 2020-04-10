@@ -2,7 +2,7 @@ import { Col, Row, Select, Typography } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
-import { PlaylistTag, TracksTable } from '../../components';
+import { TracksTable } from '../../components';
 import { Playlist, Track } from '../../models';
 import {
     getPlaylists, getSelectedPlaylists, getTracksForSelectedPlaylistIds
@@ -46,24 +46,8 @@ export class ManagePlaylistsPage extends React.Component<ManagePlaylistsPageProp
       </Option>
     ));
 
-    const playlist = {
-      id: '3WGhwW6dixRn4IPmPhPMHi',
-      name: 'All',
-      ownerUserId: '116737261',
-      totalTracks: 1258,
-      images: [
-        {
-          url: 'https://i.scdn.co/image/ab67616d0000b273682323fe6ee0ff789c16a0a5',
-          height: 640,
-          width: 640,
-        },
-      ],
-      trackIds: null,
-    };
-
     return (
       <React.Fragment>
-        <PlaylistTag playlist={playlist}></PlaylistTag>
         <Row>
           <Col>
             <Text>Authorized</Text>
