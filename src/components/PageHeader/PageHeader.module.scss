@@ -1,5 +1,7 @@
+@import '../../variables';
+
 .title {
-  color: rgb(30, 215, 96) !important;
+  color: $spotifyColor !important;
   margin-bottom: 0 !important;
   vertical-align: middle;
 }

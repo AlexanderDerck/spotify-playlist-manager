@@ -1,4 +1,10 @@
+@import '../../variables';
+
 .tagMaxWidth {
   display: inline-block;
   max-width: 15em;
+}
+
+.spotifyIcon {
+  color: $spotifyColor;
 }

@@ -1,6 +1,7 @@
 import { Avatar, Col, Row, Typography } from 'antd';
 import * as React from 'react';
-import { CaretRightOutlined } from '@ant-design/icons';
+import { faSpotify } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Playlist } from '../../models';
 import styles from './PlaylistTag.module.scss';
 
@@ -29,7 +30,7 @@ export const PlaylistTag: React.FunctionComponent<PlaylistTagProps> = ({ playlis
 
 function createAvatar(imageUrl: string) {
   if (!imageUrl) {
-    return <Avatar icon={CaretRightOutlined}></Avatar>;
+    return <FontAwesomeIcon icon={faSpotify} size="lg" className={styles.spotifyIcon} />;
   }
 
   return <Avatar src={imageUrl} size="small"></Avatar>;
