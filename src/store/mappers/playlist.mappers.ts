@@ -1,7 +1,7 @@
-import { Album, Artist, Playlist, SpotifyImage, Track } from '../../models';
+
+import { Album, Artist, Playlist, SpotifyImage } from '../../models';
 import {
-    AlbumObjectSimplified, ArtistObjectSimplified, ImageObject, PlaylistObjectSimplified,
-    PlaylistTrackObject
+    AlbumObjectSimplified, ArtistObjectSimplified, ImageObject, PlaylistObjectSimplified
 } from '../../typings/spotify-api';
 
 export function mapToPlaylist(playlistResponse: PlaylistObjectSimplified): Playlist {
@@ -12,15 +12,6 @@ export function mapToPlaylist(playlistResponse: PlaylistObjectSimplified): Playl
     totalTracks: playlistResponse.tracks.total,
     images: playlistResponse.images.map(mapToImage),
     trackIds: null,
-  };
-}
-
-export function mapToTrack(trackResponse: PlaylistTrackObject): Track {
-  return {
-    id: trackResponse.track.id,
-    name: trackResponse.track.name,
-    album: mapToAlbum(trackResponse.track.album),
-    artists: trackResponse.track.artists.map(mapToArtist),
   };
 }
 

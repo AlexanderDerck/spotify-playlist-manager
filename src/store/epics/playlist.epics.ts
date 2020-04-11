@@ -1,21 +1,17 @@
 import { Epic, ofType } from 'redux-observable';
 import { forkJoin, Observable, of } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
-import { catchError, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
-import {
-    ListOfCurrentUsersPlaylistsResponse, PlaylistTrackResponse
-} from '../../typings/spotify-api';
+import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { ListOfCurrentUsersPlaylistsResponse } from '../../typings/spotify-api';
 import {
     changeSelectedPlaylistIds, loadPlaylists, loadPlaylistsError, loadPlaylistsSuccess,
-    loadPlaylistTracks, loadPlaylistTracksBecauseSelectedPlaylistsChanged, loadPlaylistTracksError,
-    loadPlaylistTracksSuccess, PlaylistAction
+    loadPlaylistTracksBecauseSelectedPlaylistsChanged, PlaylistAction, TrackAction
 } from '../actions';
-import { mapToPlaylist, mapToTrack } from '../mappers/playlist.mappers';
+import { mapToPlaylist } from '../mappers/playlist.mappers';
 import { RootState } from '../root-state';
-import { getBearerToken, getSelectedPlaylistIdsWithoutTracksLoaded } from '../selectors';
+import { getBearerToken } from '../selectors';
 
 const GET_PLAYLIST_LIMIT = 50;
-const GET_TRACKS_LIMIT = 100;
 
 export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> = (
   actions$,
@@ -47,59 +43,10 @@ export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> =
     )
   );
 
-export const changeSelectedPlaylistIdsEpic: Epic<PlaylistAction> = (actions$) =>
+export const changeSelectedPlaylistIdsEpic: Epic<PlaylistAction | TrackAction> = (actions$) =>
   actions$.pipe(
     ofType(changeSelectedPlaylistIds.type),
     map((_) => loadPlaylistTracksBecauseSelectedPlaylistsChanged())
-  );
-
-export const loadPlaylistTracksBecauseSelectedPlaylistsChangedEpic: Epic<
-  PlaylistAction,
-  PlaylistAction,
-  RootState
-> = (actions$, store$) =>
-  actions$.pipe(
-    ofType(loadPlaylistTracksBecauseSelectedPlaylistsChanged.type),
-    withLatestFrom(store$.pipe(map(getSelectedPlaylistIdsWithoutTracksLoaded))),
-    mergeMap(([_, playlistIds]) =>
-      playlistIds.map((playlistId) => loadPlaylistTracks({ playlistId }))
-    )
-  );
-
-export const loadPlaylistTracksEpic: Epic<PlaylistAction, PlaylistAction, RootState> = (
-  action$,
-  store$
-) =>
-  action$.pipe(
-    ofType(loadPlaylistTracks.type),
-    withLatestFrom(store$.pipe(map(getBearerToken))),
-    mergeMap(([action, bearerToken]) =>
-      getPlaylistTracks(action.payload.playlistId, bearerToken).pipe(
-        mergeMap((response) => {
-          const loadTracksObservables = new Array(Math.floor(response.total / response.limit))
-            .fill(null)
-            .map((_, index) =>
-              getPlaylistTracks(
-                action.payload.playlistId,
-                bearerToken,
-                index * GET_TRACKS_LIMIT + GET_TRACKS_LIMIT
-              )
-            );
-          loadTracksObservables.unshift(of(response));
-
-          return forkJoin(loadTracksObservables);
-        }),
-        map((responses) => {
-          const flattenedTracks = responses.flatMap((response) => response.items);
-
-          return loadPlaylistTracksSuccess({
-            playlistId: action.payload.playlistId,
-            tracks: flattenedTracks.map(mapToTrack),
-          });
-        }),
-        catchError((error) => of(loadPlaylistTracksError({ error })))
-      )
-    )
   );
 
 // prettier-ignore
@@ -115,22 +62,5 @@ function getListOfCurrentUsersPlaylists( bearerToken: string, offset: number = n
 
   return ajax.getJSON<ListOfCurrentUsersPlaylistsResponse>(url + queryParams.toString(), {
     authorization: bearerToken,
-  });
-}
-
-// prettier-ignore
-function getPlaylistTracks(playlistId: string, bearerToken: string, offset: number = null): Observable<PlaylistTrackResponse> {
-  const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?`;
-  const queryParams = new URLSearchParams({
-    'limit': GET_TRACKS_LIMIT.toString(),
-    'fields': 'total,limit,items(track(id,name,album,artists))'
-  });
-
-  if(offset !== null) {
-    queryParams.append('offset', offset.toString());
-  }
-
-  return ajax.getJSON<PlaylistTrackResponse>(url + queryParams.toString(), {
-    authorization: bearerToken
   });
 }

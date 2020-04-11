@@ -1,30 +1,38 @@
-import { calculateTrackIdentifier } from '../../functions';
-import { Playlist, Track } from '../../models';
 import {
-    changeSelectedPlaylistIds, loadPlaylistsSuccess, loadPlaylistTracksSuccess, PlaylistAction
+    changeSelectedPlaylistIds, loadPlaylistsSuccess, PlaylistAction
 } from '../actions/playlist.actions';
+import { loadPlaylistTracksSuccess, TrackAction } from '../actions/track.actions';
 import { initialPlaylistState, PlaylistState } from '../state/playlist.state';
 import { toStringMap } from '../utils';
 
 export function playlistReducer(
   state = initialPlaylistState,
-  action: PlaylistAction
+  action: PlaylistAction | TrackAction
 ): PlaylistState {
   switch (action.type) {
     case loadPlaylistsSuccess.type:
       return {
         ...state,
-        playLists: toStringMap(
-          [...Object.values(state.playLists), ...action.payload.playLists],
-          (playlist) => playlist.id
-        ),
+        playLists: {
+          ...state.playLists,
+          ...toStringMap(action.payload.playLists, (p) => p.id),
+        },
       };
     case loadPlaylistTracksSuccess.type:
-      return updateStateTracksFetchedForPlaylist(
-        state,
-        action.payload.playlistId,
-        action.payload.tracks
-      );
+      const playlistToUpdate = state.playLists[action.payload.playlistId];
+      return {
+        ...state,
+        playLists: {
+          ...state.playLists,
+          [action.payload.playlistId]: {
+            ...playlistToUpdate,
+            trackIds: [
+              ...(playlistToUpdate.trackIds || []),
+              ...action.payload.tracks.map((t) => t.id),
+            ],
+          },
+        },
+      };
     case changeSelectedPlaylistIds.type:
       return {
         ...state,
@@ -33,29 +41,4 @@ export function playlistReducer(
     default:
       return state;
   }
-}
-
-/**
- * Put the fetched tracks in the store, and link the tracks to the playlist in the store
- */
-function updateStateTracksFetchedForPlaylist(
-  state: PlaylistState,
-  playlistId: string,
-  tracks: Track[]
-) {
-  const playlistToUpdate = state.playLists[playlistId];
-  const mergedTrackIds = tracks
-    .map((t) => calculateTrackIdentifier(t))
-    .concat(playlistToUpdate.trackIds || [])
-    .filter((value, index, self) => self.indexOf(value) === index); // Get unique values
-  const updatedPlaylist: Playlist = {
-    ...playlistToUpdate,
-    trackIds: mergedTrackIds,
-  };
-
-  return {
-    ...state,
-    playLists: { ...state.playLists, [updatedPlaylist.id]: updatedPlaylist },
-    tracks: toStringMap([...Object.values(state.tracks), ...tracks], calculateTrackIdentifier),
-  };
 }

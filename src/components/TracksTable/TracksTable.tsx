@@ -32,7 +32,7 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
     renderPlaylistTagsForTrack(track, selectedPlaylists);
 
   return (
-    <Table dataSource={tracks} tableLayout="fixed" size="small">
+    <Table dataSource={tracks} tableLayout="fixed" size="small" rowKey={(t) => t.id}>
       <Column
         title="Name"
         dataIndex="name"
