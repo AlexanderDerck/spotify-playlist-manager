@@ -1,7 +1,7 @@
 import { Epic, ofType } from 'redux-observable';
 import { forkJoin, Observable, of } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
-import { catchError, map, mergeMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
 import { PlaylistTrackResponse } from '../../typings/spotify-api';
 import {
     loadPlaylistTracks, loadPlaylistTracksBecauseSelectedPlaylistsChanged, loadPlaylistTracksError,
@@ -21,7 +21,7 @@ export const loadPlaylistTracksBecauseSelectedPlaylistsChangedEpic: Epic<
   actions$.pipe(
     ofType(loadPlaylistTracksBecauseSelectedPlaylistsChanged.type),
     withLatestFrom(store$.pipe(map(getSelectedPlaylistIdsWithoutTracksLoaded))),
-    mergeMap(([_, playlistIds]) =>
+    switchMap(([_, playlistIds]) =>
       playlistIds.map((playlistId) => loadPlaylistTracks({ playlistId }))
     )
   );
@@ -35,7 +35,7 @@ export const loadPlaylistTracksEpic: Epic<TrackAction, TrackAction, RootState> =
     withLatestFrom(store$.pipe(map(getBearerToken))),
     mergeMap(([action, bearerToken]) =>
       getPlaylistTracks(action.payload.playlistId, bearerToken).pipe(
-        mergeMap((response) => {
+        switchMap((response) => {
           const loadTracksObservables = new Array(Math.floor(response.total / response.limit))
             .fill(null)
             .map((_, index) =>
