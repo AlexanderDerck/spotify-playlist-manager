@@ -3,14 +3,14 @@ import { NEVER, of } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { CurrentUsersProfileResponse } from '../../typings/spotify-api';
-import { RootState } from '../root-state';
 import {
     authorize, checkAuthorization, checkAuthorizationAuthorized, checkAuthorizationNotAuthorized,
     loadUserBecauseAuthorized, loadUserBecauseAuthorizedError, loadUserBecauseAuthorizedSuccess,
     UserAction
-} from './user.actions';
-import { mapToUser } from './user.mappers';
-import { getBearerToken } from './user.selectors';
+} from '../actions/user.actions';
+import { mapToUser } from '../mappers/user.mappers';
+import { RootState } from '../root-state';
+import { getBearerToken } from '../selectors/user.selectors';
 
 export const checkAuthorizationEpic: Epic<UserAction, UserAction> = (action$) =>
   action$.pipe(
@@ -39,7 +39,7 @@ export const authorizeEpic: Epic<UserAction, any> = (action$) =>
       const queryParams = new URLSearchParams({
         client_id: '17df0cd526354633a5ab47045e8efa8c',
         response_type: 'token',
-        redirect_uri: 'https://10.63.1.202:3000',
+        redirect_uri: 'https://172.20.10.2:3000/',
         scope:
           'playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private',
       });

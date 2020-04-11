@@ -1,6 +1,6 @@
 import { combineEpics } from 'redux-observable';
-import * as playlistEpics from './playlist/playlist.epics';
-import * as userEpics from './user/user.epics';
+import * as playlistEpics from './epics/playlist.epics';
+import * as userEpics from './epics/user.epics';
 
 export const rootEpic = combineEpics(
   ...(Object.values(userEpics) as any),

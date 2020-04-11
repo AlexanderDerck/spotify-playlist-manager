@@ -1,5 +1,5 @@
-import { initialPlaylistState, PlaylistState } from './playlist/playlist.state';
-import { initialUserState, UserState } from './user/user.state';
+import { initialPlaylistState, PlaylistState } from './state/playlist.state';
+import { initialUserState, UserState } from './state/user.state';
 
 export interface RootState {
   user: UserState;

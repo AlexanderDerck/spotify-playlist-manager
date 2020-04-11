@@ -1,11 +1,11 @@
+import './index.scss';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { checkAuthorization } from './store/actions';
 import { store } from './store/store';
-import { checkAuthorization } from './store/user';
-import './index.scss';
 
 store.dispatch(checkAuthorization());
 

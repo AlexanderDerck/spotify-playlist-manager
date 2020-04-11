@@ -5,15 +5,14 @@ import { catchError, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/opera
 import {
     ListOfCurrentUsersPlaylistsResponse, PlaylistTrackResponse
 } from '../../typings/spotify-api';
-import { RootState } from '../root-state';
-import { getBearerToken } from '../user';
 import {
     changeSelectedPlaylistIds, loadPlaylists, loadPlaylistsError, loadPlaylistsSuccess,
     loadPlaylistTracks, loadPlaylistTracksBecauseSelectedPlaylistsChanged, loadPlaylistTracksError,
     loadPlaylistTracksSuccess, PlaylistAction
-} from './playlist.actions';
-import { mapToPlaylist, mapToTrack } from './playlist.mappers';
-import { getSelectedPlaylistIdsWithoutTracksLoaded } from './playlist.selectors';
+} from '../actions';
+import { mapToPlaylist, mapToTrack } from '../mappers/playlist.mappers';
+import { RootState } from '../root-state';
+import { getBearerToken, getSelectedPlaylistIdsWithoutTracksLoaded } from '../selectors';
 
 const GET_PLAYLIST_LIMIT = 50;
 const GET_TRACKS_LIMIT = 100;

@@ -1,10 +1,10 @@
 import { calculateTrackIdentifier } from '../../functions';
 import { Playlist, Track } from '../../models';
-import { toStringMap } from '../utils';
 import {
     changeSelectedPlaylistIds, loadPlaylistsSuccess, loadPlaylistTracksSuccess, PlaylistAction
-} from './playlist.actions';
-import { initialPlaylistState, PlaylistState } from './playlist.state';
+} from '../actions/playlist.actions';
+import { initialPlaylistState, PlaylistState } from '../state/playlist.state';
+import { toStringMap } from '../utils';
 
 export function playlistReducer(
   state = initialPlaylistState,

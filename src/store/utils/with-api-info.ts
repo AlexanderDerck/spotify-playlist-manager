@@ -2,7 +2,7 @@ import { combineLatest, Observable, OperatorFunction } from 'rxjs';
 import { filter, map, switchMap, take } from 'rxjs/operators';
 import { ApiInfo } from '../../models';
 import { RootState } from '../root-state';
-import { getBearerToken, getUserId } from '../user';
+import { getBearerToken, getUserId } from '../selectors';
 
 export function withApiInfo<T>(store$: Observable<RootState>): OperatorFunction<T, [T, ApiInfo]> {
   return (input$: Observable<T>) =>

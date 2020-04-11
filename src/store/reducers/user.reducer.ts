@@ -1,9 +1,7 @@
 import {
-  UserAction,
-  checkAuthorizationAuthorized,
-  loadUserBecauseAuthorizedSuccess,
-} from './user.actions';
-import { UserState, initialUserState } from './user.state';
+    checkAuthorizationAuthorized, loadUserBecauseAuthorizedSuccess, UserAction
+} from '../actions/user.actions';
+import { initialUserState, UserState } from '../state/user.state';
 
 export function userReducer(state = initialUserState, action: UserAction): UserState {
   switch (action.type) {

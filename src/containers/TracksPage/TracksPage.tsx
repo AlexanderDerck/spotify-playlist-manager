@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 import { TracksTable } from '../../components';
 import { Playlist, Track } from '../../models';
+import { changeSelectedPlaylistIds, loadPlaylists } from '../../store/actions';
+import { RootState } from '../../store/root-state';
 import {
     getPlaylistsMap, getSelectedPlaylists, getTracksForSelectedPlaylistIds
-} from '../../store/playlist';
-import { changeSelectedPlaylistIds, loadPlaylists } from '../../store/playlist/playlist.actions';
-import { RootState } from '../../store/root-state';
+} from '../../store/selectors';
 import { StringMap } from '../../store/utils';
 
 const { Title, Text } = Typography;
