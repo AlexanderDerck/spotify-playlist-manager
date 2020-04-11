@@ -2,7 +2,7 @@ import { Col, Row, Select, Space, Typography } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
-import { TracksTable } from '../../components';
+import { Label, TracksTable } from '../../components';
 import { Playlist, Track } from '../../models';
 import { changeSelectedPlaylistIds, loadPlaylists } from '../../store/actions';
 import { RootState } from '../../store/root-state';
@@ -11,7 +11,7 @@ import {
 } from '../../store/selectors';
 import { StringMap } from '../../store/utils';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Option } = Select;
 
 export interface TracksPageProps extends StateProps, DispatchProps {}
@@ -55,18 +55,19 @@ export class TracksPage extends React.Component<TracksPageProps> {
         <Space direction="vertical" size="large">
           <Row>
             <Col span={12}>
-              <Text>Selected playlists</Text>
-              <Select
-                value={this.props.selectedPlaylists.map((p) => p.id)}
-                onChange={(e) => this.changeSelectedPlaylistIds(e.toString().split(','))}
-                filterOption={filterOption}
-                placeholder="Select playlists to search in"
-                mode="tags"
-                size="large"
-                className="mt-1 w-100"
-              >
-                {playlistOptions}
-              </Select>
+              <Label text="Selected playlists">
+                <Select
+                  value={this.props.selectedPlaylists.map((p) => p.id)}
+                  onChange={(e) => this.changeSelectedPlaylistIds(e.toString().split(','))}
+                  filterOption={filterOption}
+                  placeholder="Select playlists to search in"
+                  mode="tags"
+                  size="large"
+                  className="mt-1 w-100"
+                >
+                  {playlistOptions}
+                </Select>
+              </Label>
             </Col>
           </Row>
           <Row>
