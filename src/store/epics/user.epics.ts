@@ -35,11 +35,11 @@ export const loadUserBecauseUserLoggedInEpic: Epic<UserAction, UserAction> = (ac
 export const authorizeEpic: Epic<UserAction, any> = (action$) =>
   action$.pipe(
     ofType(authorize.type),
-    map((_) => {
+    switchMap((_) => {
       const queryParams = new URLSearchParams({
         client_id: '17df0cd526354633a5ab47045e8efa8c',
         response_type: 'token',
-        redirect_uri: 'https://172.20.10.2:3000/',
+        redirect_uri: 'https://172.20.10.2:3000',
         scope:
           'playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private',
       });
