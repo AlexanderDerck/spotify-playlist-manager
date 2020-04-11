@@ -2,7 +2,7 @@ import { Col, Row, Select, Space, Typography } from 'antd';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
-import { Label, TracksTable } from '../../components';
+import { TracksTable } from '../../components';
 import { Playlist, Track } from '../../models';
 import { changeSelectedPlaylistIds, loadPlaylists } from '../../store/actions';
 import { RootState } from '../../store/root-state';
@@ -55,19 +55,18 @@ export class TracksPage extends React.Component<TracksPageProps> {
         <Space direction="vertical" size="large">
           <Row>
             <Col span={12}>
-              <Label text="Selected playlists">
-                <Select
-                  value={this.props.selectedPlaylists.map((p) => p.id)}
-                  onChange={(e) => this.changeSelectedPlaylistIds(e.toString().split(','))}
-                  filterOption={filterOption}
-                  placeholder="Select playlists to search in"
-                  mode="tags"
-                  size="large"
-                  className="mt-1 w-100"
-                >
-                  {playlistOptions}
-                </Select>
-              </Label>
+              <label>Selected playlists</label>
+              <Select
+                value={this.props.selectedPlaylists.map((p) => p.id)}
+                onChange={(e) => this.changeSelectedPlaylistIds(e.toString().split(','))}
+                filterOption={filterOption}
+                placeholder="Select playlists to search in"
+                mode="tags"
+                size="large"
+                className="mt-1 w-100"
+              >
+                {playlistOptions}
+              </Select>
             </Col>
           </Row>
           <Row>
