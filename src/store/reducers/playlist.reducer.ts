@@ -1,6 +1,4 @@
-import {
-    loadPagedTracksForPlaylistSuccess, LoadPlaylistTracksSagaAction
-} from '../actions/load-playlist-tracks.saga.actions';
+import { loadPagedTracksForPlaylistSuccess, TrackAction } from '../actions';
 import {
     changeSelectedPlaylistIds, loadPlaylistsSuccess, PlaylistAction
 } from '../actions/playlist.actions';
@@ -9,7 +7,7 @@ import { toStringMap } from '../utils';
 
 export function playlistReducer(
   state = initialPlaylistState,
-  action: PlaylistAction | LoadPlaylistTracksSagaAction
+  action: PlaylistAction | TrackAction
 ): PlaylistState {
   switch (action.type) {
     case loadPlaylistsSuccess.type:

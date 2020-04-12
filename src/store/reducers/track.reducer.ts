@@ -1,11 +1,8 @@
-import { loadPagedTracksForPlaylistSuccess, LoadPlaylistTracksSagaAction } from '../actions';
+import { loadPagedTracksForPlaylistSuccess, TrackAction } from '../actions';
 import { initialTrackState, TrackState } from '../state/track.state';
 import { toStringMap } from '../utils';
 
-export function trackReducer(
-  state = initialTrackState,
-  action: LoadPlaylistTracksSagaAction
-): TrackState {
+export function trackReducer(state = initialTrackState, action: TrackAction): TrackState {
   switch (action.type) {
     case loadPagedTracksForPlaylistSuccess.type:
       return {
