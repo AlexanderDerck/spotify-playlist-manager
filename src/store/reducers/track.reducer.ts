@@ -1,10 +1,10 @@
-import { runLoadPagedTracksForPlaylistTaskCompleted, TrackAction } from '../actions';
+import { runLoadTracksForPlaylistTaskCompleted, TrackAction } from '../actions';
 import { initialTrackState, TrackState } from '../state/track.state';
 import { toStringMap } from '../utils';
 
 export function trackReducer(state = initialTrackState, action: TrackAction): TrackState {
   switch (action.type) {
-    case runLoadPagedTracksForPlaylistTaskCompleted.type:
+    case runLoadTracksForPlaylistTaskCompleted.type:
       return {
         ...state,
         tracks: toStringMap(

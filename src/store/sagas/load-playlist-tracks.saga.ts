@@ -1,7 +1,7 @@
 import { call, put, select, take } from 'typed-redux-saga';
 import { environment } from '../../environment';
 import { Playlist } from '../../models';
-import { loadPagedTracksForPlaylist } from '../actions';
+import { loadTracksForPlaylist } from '../actions';
 import {
     loadAllTracksForPlaylist, loadAllTracksForPlaylistError, loadPlaylistTracksSagaCompleted,
     loadPlaylistTracksSagaStart
@@ -33,6 +33,6 @@ function* loadTracksForPlaylistFlow(playlist: Playlist) {
 
   const actionsToQueue = Math.ceil(playlist.totalTracks / environment.GetTracksPagingLimit);
   for (let i = 0; i < actionsToQueue; i++) {
-    yield put(loadPagedTracksForPlaylist({ playlistId: playlist.id, page: i }));
+    yield put(loadTracksForPlaylist({ playlistId: playlist.id, page: i }));
   }
 }

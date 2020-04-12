@@ -2,30 +2,30 @@ import { call, put, select, takeEvery } from 'typed-redux-saga';
 import { environment } from '../../environment';
 import { PlaylistTrackResponse } from '../../typings/spotify-api';
 import {
-    runLoadPagedTracksForPlaylistTask, runLoadPagedTracksForPlaylistTaskCompleted,
-    runLoadPagedTracksForPlaylistTaskErrored
+    runLoadTracksForPlaylistTask, runLoadTracksForPlaylistTaskCompleted,
+    runLoadTracksForPlaylistTaskErrored
 } from '../actions';
 import { mapToTrack } from '../mappers/track.mappers';
 import { getBearerToken } from '../selectors';
 
-export function* loadPagedTracksSaga() {
+export function* loadTracksSaga() {
   while (true) {
-    yield takeEvery(runLoadPagedTracksForPlaylistTask, (action) =>
-      loadPagedTracksFlow(action.payload.playlistId, action.payload.page)
+    yield takeEvery(runLoadTracksForPlaylistTask, (action) =>
+      loadTracksFlow(action.payload.playlistId, action.payload.page)
     );
   }
 }
 
-function* loadPagedTracksFlow(playlistId: string, page: number) {
+function* loadTracksFlow(playlistId: string, page: number) {
   const bearerToken = yield* select(getBearerToken);
 
   try {
     const response = yield* call(getPlaylistTracks, playlistId, bearerToken, page);
     const tracks = response.items.map(mapToTrack);
 
-    yield put(runLoadPagedTracksForPlaylistTaskCompleted({ playlistId, page, tracks }));
+    yield put(runLoadTracksForPlaylistTaskCompleted({ playlistId, page, tracks }));
   } catch (error) {
-    yield put(runLoadPagedTracksForPlaylistTaskErrored({ playlistId, page, error }));
+    yield put(runLoadTracksForPlaylistTaskErrored({ playlistId, page, error }));
   }
 }
 
