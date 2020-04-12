@@ -1,6 +1,11 @@
 import { createEpicMiddleware } from 'redux-observable';
 import createSagaMiddleware from 'redux-saga';
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { Action, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { environment } from '../environment';
+import {
+    queueLoadTracksForPlaylistTask, runLoadTracksForPlaylistTask,
+    runLoadTracksForPlaylistTaskCompleted, runLoadTracksForPlaylistTaskErrored
+} from './actions';
 import { rootEpic } from './root-epic';
 import { rootReducer } from './root-reducer';
 import { rootSaga } from './root-saga';
@@ -14,9 +19,25 @@ export const store = configureStore({
   reducer: rootReducer,
   middleware: [...getDefaultMiddleware(), epicMiddleware, sagaMiddleware],
   devTools: {
-    // actionsBlacklist: 'LoadPlaylistTracksSaga',
+    predicate: actionsDevtoolsFilter,
   },
 });
 
 epicMiddleware.run(rootEpic as any);
 sagaMiddleware.run(rootSaga);
+
+function actionsDevtoolsFilter(_, action: Action): boolean {
+  if (environment.EnableTracing) {
+    return true;
+  }
+
+  switch (action.type) {
+    case queueLoadTracksForPlaylistTask.type:
+    case runLoadTracksForPlaylistTask.type:
+    case runLoadTracksForPlaylistTaskCompleted.type:
+    case runLoadTracksForPlaylistTaskErrored.type:
+      return false;
+    default:
+      return true;
+  }
+}
