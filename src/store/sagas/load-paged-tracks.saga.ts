@@ -2,15 +2,15 @@ import { call, put, select, takeEvery } from 'typed-redux-saga';
 import { environment } from '../../environment';
 import { PlaylistTrackResponse } from '../../typings/spotify-api';
 import {
-    loadPagedTracksForPlaylistError, loadPagedTracksForPlaylistSuccess,
-    startLoadPagedTracksForPlaylist
+    runLoadPagedTracksForPlaylistTask, runLoadPagedTracksForPlaylistTaskCompleted,
+    runLoadPagedTracksForPlaylistTaskErrored
 } from '../actions';
 import { mapToTrack } from '../mappers/track.mappers';
 import { getBearerToken } from '../selectors';
 
 export function* loadPagedTracksSaga() {
   while (true) {
-    yield takeEvery(startLoadPagedTracksForPlaylist, (action) =>
+    yield takeEvery(runLoadPagedTracksForPlaylistTask, (action) =>
       loadPagedTracksFlow(action.payload.playlistId, action.payload.page)
     );
   }
@@ -23,9 +23,9 @@ function* loadPagedTracksFlow(playlistId: string, page: number) {
     const response = yield* call(getPlaylistTracks, playlistId, bearerToken, page);
     const tracks = response.items.map(mapToTrack);
 
-    yield put(loadPagedTracksForPlaylistSuccess({ playlistId, page, tracks }));
+    yield put(runLoadPagedTracksForPlaylistTaskCompleted({ playlistId, page, tracks }));
   } catch (error) {
-    yield put(loadPagedTracksForPlaylistError({ playlistId, page, error }));
+    yield put(runLoadPagedTracksForPlaylistTaskErrored({ playlistId, page, error }));
   }
 }
 

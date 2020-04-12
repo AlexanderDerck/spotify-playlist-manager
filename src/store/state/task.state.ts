@@ -1,8 +1,8 @@
-import { LoadPagedTracksForPlaylistPayload } from '../../models';
+import { LoadPagedTracksForPlaylistTask } from '../../models';
 
 export interface TaskState {
-  queuedLoadTrackTasks: LoadPagedTracksForPlaylistPayload[];
-  runningLoadTrackTasks: LoadPagedTracksForPlaylistPayload[];
+  queuedLoadTrackTasks: LoadPagedTracksForPlaylistTask[];
+  runningLoadTrackTasks: LoadPagedTracksForPlaylistTask[];
 }
 
 export const initialTaskState: TaskState = {

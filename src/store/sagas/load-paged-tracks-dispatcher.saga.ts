@@ -1,14 +1,14 @@
 import { put, select, takeEvery } from 'typed-redux-saga';
 import {
-    loadPagedTracksForPlaylistError, loadPagedTracksForPlaylistSuccess,
-    startLoadPagedTracksForPlaylist
+    runLoadPagedTracksForPlaylistTask, runLoadPagedTracksForPlaylistTaskCompleted,
+    runLoadPagedTracksForPlaylistTaskErrored
 } from '../actions';
 import { getQueuedLoadTrackTasks } from '../selectors';
 
 export function* loadPagedTracksDispatcherSaga() {
   while (true) {
     yield takeEvery(
-      [loadPagedTracksForPlaylistSuccess, loadPagedTracksForPlaylistError],
+      [runLoadPagedTracksForPlaylistTaskCompleted, runLoadPagedTracksForPlaylistTaskErrored],
       loadPagedTracksDispatcherFlow
     );
   }
@@ -19,7 +19,7 @@ function* loadPagedTracksDispatcherFlow() {
 
   if (queuedLoadTrackTasks.length > 0) {
     yield put(
-      startLoadPagedTracksForPlaylist(queuedLoadTrackTasks[queuedLoadTrackTasks.length - 1])
+      runLoadPagedTracksForPlaylistTask(queuedLoadTrackTasks[queuedLoadTrackTasks.length - 1])
     );
   }
 }

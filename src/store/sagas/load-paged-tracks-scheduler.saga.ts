@@ -1,8 +1,9 @@
 import { put, select, takeEvery } from 'typed-redux-saga';
 import { environment } from '../../environment';
-import { LoadPagedTracksForPlaylistPayload } from '../../models';
+import { LoadPagedTracksForPlaylistTask } from '../../models';
 import {
-    loadPagedTracksForPlaylist, queueLoadPagedTracksForPlaylist, startLoadPagedTracksForPlaylist
+    loadPagedTracksForPlaylist, queueLoadPagedTracksForPlaylistTask,
+    runLoadPagedTracksForPlaylistTask
 } from '../actions';
 import { getQueuedLoadTrackTasks, getRunningLoadTrackTasks } from '../selectors';
 
@@ -14,22 +15,22 @@ export function* loadPagedTracksSchedulerSaga() {
   }
 }
 
-function* loadPagedTracksSchedulerFlow(payload: LoadPagedTracksForPlaylistPayload) {
+function* loadPagedTracksSchedulerFlow(payload: LoadPagedTracksForPlaylistTask) {
   const runningLoadTrackTasks = yield* select(getRunningLoadTrackTasks);
 
   if (runningLoadTrackTasks.length > environment.ConcurrentRequestLimit) {
-    yield put(queueLoadPagedTracksForPlaylist(payload));
+    yield put(queueLoadPagedTracksForPlaylistTask(payload));
     return;
   }
 
   const queuedLoadTrackTasks = yield* select(getQueuedLoadTrackTasks);
 
   if (queuedLoadTrackTasks.length > 0) {
-    yield put(queueLoadPagedTracksForPlaylist(payload));
+    yield put(queueLoadPagedTracksForPlaylistTask(payload));
     yield put(
-      startLoadPagedTracksForPlaylist(queuedLoadTrackTasks[queuedLoadTrackTasks.length - 1])
+      runLoadPagedTracksForPlaylistTask(queuedLoadTrackTasks[queuedLoadTrackTasks.length - 1])
     );
   } else {
-    yield put(startLoadPagedTracksForPlaylist(payload));
+    yield put(runLoadPagedTracksForPlaylistTask(payload));
   }
 }

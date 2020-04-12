@@ -1,17 +1,18 @@
 import {
-    loadPagedTracksForPlaylistError, loadPagedTracksForPlaylistSuccess,
-    queueLoadPagedTracksForPlaylist, startLoadPagedTracksForPlaylist, TaskAction, TrackAction
+    queueLoadPagedTracksForPlaylistTask, runLoadPagedTracksForPlaylistTask,
+    runLoadPagedTracksForPlaylistTaskCompleted, runLoadPagedTracksForPlaylistTaskErrored,
+    TrackAction
 } from '../actions';
 import { initialTaskState, TaskState } from '../state/task.state';
 
-export function taskReducer(state = initialTaskState, action: TaskAction | TrackAction): TaskState {
+export function taskReducer(state = initialTaskState, action: TrackAction): TaskState {
   switch (action.type) {
-    case queueLoadPagedTracksForPlaylist.type:
+    case queueLoadPagedTracksForPlaylistTask.type:
       return {
         ...state,
         queuedLoadTrackTasks: [...state.queuedLoadTrackTasks, { ...action.payload }],
       };
-    case startLoadPagedTracksForPlaylist.type:
+    case runLoadPagedTracksForPlaylistTask.type:
       return {
         ...state,
         runningLoadTrackTasks: [...state.runningLoadTrackTasks, { ...action.payload }],
@@ -19,8 +20,8 @@ export function taskReducer(state = initialTaskState, action: TaskAction | Track
           (t) => t.playlistId !== action.payload.playlistId || t.page !== action.payload.page
         ),
       };
-    case loadPagedTracksForPlaylistSuccess.type:
-    case loadPagedTracksForPlaylistError.type:
+    case runLoadPagedTracksForPlaylistTaskCompleted.type:
+    case runLoadPagedTracksForPlaylistTaskErrored.type:
       return {
         ...state,
         runningLoadTrackTasks: state.runningLoadTrackTasks.filter(
