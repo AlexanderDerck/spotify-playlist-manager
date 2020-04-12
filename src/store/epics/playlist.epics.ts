@@ -2,6 +2,7 @@ import { Epic, ofType } from 'redux-observable';
 import { forkJoin, Observable, of } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { environment } from '../../environment';
 import { ListOfCurrentUsersPlaylistsResponse } from '../../typings/spotify-api';
 import {
     loadPlaylists, loadPlaylistsError, loadPlaylistsSuccess, PlaylistAction
@@ -10,8 +11,6 @@ import { loadPlaylistTracksSagaStart } from '../actions/load-playlist-tracks.sag
 import { mapToPlaylist } from '../mappers/playlist.mappers';
 import { RootState } from '../root-state';
 import { getBearerToken } from '../selectors';
-
-const GET_PLAYLIST_LIMIT = 50;
 
 export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> = (
   actions$,
@@ -28,7 +27,7 @@ export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> =
             .map((_, index) =>
               getListOfCurrentUsersPlaylists(
                 bearerToken,
-                index * GET_PLAYLIST_LIMIT + GET_PLAYLIST_LIMIT
+                index * environment.GetPlaylistsPagingLimit + environment.GetPlaylistsPagingLimit
               )
             );
           loadPlaylistsObservables.unshift(of(response));
@@ -53,7 +52,7 @@ export const startSagaEpic: Epic = (actions$) =>
 function getListOfCurrentUsersPlaylists( bearerToken: string, offset: number = null): Observable<ListOfCurrentUsersPlaylistsResponse> {
   const url = 'https://api.spotify.com/v1/me/playlists?';
   const queryParams = new URLSearchParams({
-    'limit': GET_PLAYLIST_LIMIT.toString()
+    'limit': environment.GetPlaylistsPagingLimit.toString()
   });
 
   if (offset !== null) {

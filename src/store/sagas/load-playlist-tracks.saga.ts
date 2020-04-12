@@ -1,4 +1,5 @@
 import { call, put, select, take, takeEvery } from 'typed-redux-saga';
+import { environment } from '../../environment';
 import { Playlist } from '../../models';
 import { PlaylistTrackResponse } from '../../typings/spotify-api';
 import {
@@ -9,9 +10,6 @@ import {
 } from '../actions/load-playlist-tracks.saga.actions';
 import { mapToTrack } from '../mappers/track.mappers';
 import { getBearerToken, getPlaylists } from '../selectors';
-
-const GET_TRACKS_LIMIT = 100;
-const CONCURRENT_REQUESTS_LIMIT = 3;
 
 export function* loadPlaylistTracksSaga() {
   while (true) {
@@ -36,7 +34,7 @@ export function* loadPlaylistTracksSaga() {
 function* loadTracksForPlaylistFlow(playlist: Playlist) {
   yield put(loadAllTracksForPlaylist({ playlistId: playlist.id }));
 
-  const actionsToQueue = Math.ceil(playlist.totalTracks / GET_TRACKS_LIMIT);
+  const actionsToQueue = Math.ceil(playlist.totalTracks / environment.GetTracksPagingLimit);
   for (let i = 0; i < actionsToQueue; i++) {
     yield put(scheduleLoadPagedTracksForPlaylistAction({ playlistId: playlist.id, page: i }));
   }
@@ -82,7 +80,7 @@ export function* loadPagedTracksForPlaylistDispatcherSaga() {
       runningActions.delete(action.payload.playlistId + action.payload.page);
     }
 
-    if (runningActions.size < CONCURRENT_REQUESTS_LIMIT && queuedActions.length) {
+    if (runningActions.size < environment.ConcurrentRequestLimit && queuedActions.length) {
       const actionToDispatch = queuedActions.pop();
       const { playlistId, page } = actionToDispatch;
 
@@ -124,9 +122,9 @@ function getPlaylistTracks(
   page: number
 ): Promise<PlaylistTrackResponse> {
   const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?`;
-  const offset = page * GET_TRACKS_LIMIT;
+  const offset = page * environment.GetTracksPagingLimit;
   const queryParams = new URLSearchParams({
-    limit: GET_TRACKS_LIMIT.toString(),
+    limit: environment.GetTracksPagingLimit.toString(),
     offset: offset.toString(),
     fields: 'total,limit,items(track(id,name,album,artists))',
   });
