@@ -1,4 +1,3 @@
-
 import { Album, Artist, Playlist, SpotifyImage } from '../../models';
 import {
     AlbumObjectSimplified, ArtistObjectSimplified, ImageObject, PlaylistObjectSimplified
@@ -11,7 +10,7 @@ export function mapToPlaylist(playlistResponse: PlaylistObjectSimplified): Playl
     ownerUserId: playlistResponse.owner.id,
     totalTracks: playlistResponse.tracks.total,
     images: playlistResponse.images.map(mapToImage),
-    trackIds: null,
+    trackIds: [],
   };
 }
 

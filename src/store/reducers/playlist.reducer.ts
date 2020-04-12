@@ -26,10 +26,7 @@ export function playlistReducer(
           ...state.playLists,
           [action.payload.playlistId]: {
             ...playlistToUpdate,
-            trackIds: [
-              ...(playlistToUpdate.trackIds || []),
-              ...action.payload.tracks.map((t) => t.id),
-            ],
+            trackIds: [...playlistToUpdate.trackIds, ...action.payload.tracks.map((t) => t.id)],
           },
         },
       };

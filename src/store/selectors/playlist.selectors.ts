@@ -26,8 +26,3 @@ export const getSelectedPlaylists = createSelector(
       )
       .filter((playlist) => playlist !== undefined)
 );
-
-export const getSelectedPlaylistIdsWithoutTracksLoaded = createSelector(
-  getSelectedPlaylists,
-  (selectedPlaylists) => selectedPlaylists.filter((p) => p.trackIds === null).map((p) => p.id)
-);

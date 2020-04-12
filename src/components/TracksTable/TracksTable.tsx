@@ -66,6 +66,6 @@ function getArtistNames(track: Track): string {
 
 function renderPlaylistTagsForTrack(track: Track, playlists: Playlist[]): React.ReactElement[] {
   return playlists
-    .filter((p) => p.trackIds !== null && p.trackIds.includes(track.id))
+    .filter((p) => p.trackIds.includes(track.id))
     .map((playlist) => <PlaylistTag key={playlist.id} playlist={playlist}></PlaylistTag>);
 }
