@@ -1,14 +1,14 @@
 import { all } from 'redux-saga/effects';
-import { loadPlaylistTracksSaga } from './sagas/load-playlist-tracks.saga';
-import { loadTracksDispatcherSaga } from './sagas/load-tracks-dispatcher.saga';
-import { loadTracksSchedulerSaga } from './sagas/load-tracks-scheduler.saga';
-import { loadTracksSaga } from './sagas/load-tracks.saga';
+import { loadAllTracksForAllPlaylistsSaga } from './sagas/load-all-tracks-for-all-playlists.saga';
+import { loadAllTracksForPlaylistSaga } from './sagas/load-all-tracks-for-playlist.saga';
+import { loadTracksTasksSchedulerSaga } from './sagas/load-tracks-tasks-scheduler.saga';
+import { runLoadTracksTasksSaga } from './sagas/run-load-tracks-tasks.saga';
 
 export function* rootSaga() {
   yield all([
-    loadPlaylistTracksSaga(),
-    loadTracksSchedulerSaga(),
-    loadTracksDispatcherSaga(),
-    loadTracksSaga(),
+    loadAllTracksForAllPlaylistsSaga(),
+    loadAllTracksForPlaylistSaga(),
+    loadTracksTasksSchedulerSaga(),
+    runLoadTracksTasksSaga(),
   ]);
 }

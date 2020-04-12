@@ -2,7 +2,10 @@ import { createAction } from '@reduxjs/toolkit';
 import { LoadTracksForPlaylistTask, Track } from '../../models';
 import { actionTypes, props } from '../utils';
 
-export const loadTracksForPlaylist = createAction('[Track] Load tracks for playlist', props<LoadTracksForPlaylistTask>());
+export const loadAllTracksForAllPlaylists = createAction('[Track] Load all tracks for all playlists');
+export const loadAllTracksForAllPlaylistsCompleted = createAction('[Track] Load all tracks for all playlists completed');
+export const loadAllTracksForPlaylist = createAction('[Track] Load all tracks for playlist', props<{ playlistId: string }>());
+export const loadAllTracksForPlaylistCompleted = createAction('[Track] Load all tracks for playlist completed', props<{ playlistId: string }>());
 export const queueLoadTracksForPlaylistTask = createAction('[Track] Queue LoadTracksForPlaylistTask', props<LoadTracksForPlaylistTask>());
 export const runLoadTracksForPlaylistTask = createAction('[Track] Run LoadTracksForPlaylistTask', props<LoadTracksForPlaylistTask>());
 export const runLoadTracksForPlaylistTaskCompleted = createAction(
@@ -15,7 +18,10 @@ export const runLoadTracksForPlaylistTaskErrored = createAction(
 );
 
 const actionCreatorMap = {
-  loadTracksForPlaylist,
+  loadAllTracksForAllPlaylists,
+  loadAllTracksForAllPlaylistsCompleted,
+  loadAllTracksForPlaylist,
+  loadAllTracksForPlaylistCompleted,
   queueLoadTracksForPlaylistTask,
   runLoadTracksForPlaylistTask,
   runLoadTracksForPlaylistTaskCompleted,

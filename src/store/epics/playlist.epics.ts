@@ -5,9 +5,9 @@ import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { environment } from '../../environment';
 import { ListOfCurrentUsersPlaylistsResponse } from '../../typings/spotify-api';
 import {
-    loadPlaylists, loadPlaylistsError, loadPlaylistsSuccess, PlaylistAction
+    loadAllTracksForAllPlaylists, loadPlaylists, loadPlaylistsError, loadPlaylistsSuccess,
+    PlaylistAction
 } from '../actions';
-import { loadPlaylistTracksSagaStart } from '../actions/load-playlist-tracks.saga.actions';
 import { mapToPlaylist } from '../mappers/playlist.mappers';
 import { RootState } from '../root-state';
 import { getBearerToken } from '../selectors';
@@ -42,10 +42,10 @@ export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> =
     )
   );
 
-export const startSagaEpic: Epic = (actions$) =>
+export const loadPlaylistsSuccessEpic: Epic = (actions$) =>
   actions$.pipe(
     ofType(loadPlaylistsSuccess.type),
-    map((_) => loadPlaylistTracksSagaStart())
+    map((_) => loadAllTracksForAllPlaylists())
   );
 
 // prettier-ignore

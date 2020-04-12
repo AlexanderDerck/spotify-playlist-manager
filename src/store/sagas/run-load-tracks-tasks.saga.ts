@@ -8,15 +8,15 @@ import {
 import { mapToTrack } from '../mappers/track.mappers';
 import { getBearerToken } from '../selectors';
 
-export function* loadTracksSaga() {
+export function* runLoadTracksTasksSaga() {
   while (true) {
     yield takeEvery(runLoadTracksForPlaylistTask, (action) =>
-      loadTracksFlow(action.payload.playlistId, action.payload.page)
+      runLoadTracksTasksFlow(action.payload.playlistId, action.payload.page)
     );
   }
 }
 
-function* loadTracksFlow(playlistId: string, page: number) {
+function* runLoadTracksTasksFlow(playlistId: string, page: number) {
   const bearerToken = yield* select(getBearerToken);
 
   try {
