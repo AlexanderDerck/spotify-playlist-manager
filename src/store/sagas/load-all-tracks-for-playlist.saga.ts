@@ -33,7 +33,10 @@ function* loadAllTracksForPlaylistFlow(playlistId: string) {
       runLoadTracksForPlaylistTaskCompleted,
       runLoadTracksForPlaylistTaskErrored,
     ]);
-    pagesLoading.delete(taskCompletedAction.payload.page);
+
+    if (taskCompletedAction.payload.playlistId === playlistId) {
+      pagesLoading.delete(taskCompletedAction.payload.page);
+    }
   }
 
   yield put(loadAllTracksForPlaylistCompleted({ playlistId }));
