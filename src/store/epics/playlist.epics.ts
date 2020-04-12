@@ -4,9 +4,9 @@ import { ajax } from 'rxjs/ajax';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { ListOfCurrentUsersPlaylistsResponse } from '../../typings/spotify-api';
 import {
-    changeSelectedPlaylistIds, loadPlaylists, loadPlaylistsError, loadPlaylistsSuccess,
-    loadPlaylistTracksBecauseSelectedPlaylistsChanged, PlaylistAction, TrackAction
+    loadPlaylists, loadPlaylistsError, loadPlaylistsSuccess, PlaylistAction
 } from '../actions';
+import { loadPlaylistTracksSagaStart } from '../actions/load-playlist-tracks.saga.actions';
 import { mapToPlaylist } from '../mappers/playlist.mappers';
 import { RootState } from '../root-state';
 import { getBearerToken } from '../selectors';
@@ -43,10 +43,10 @@ export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> =
     )
   );
 
-export const changeSelectedPlaylistIdsEpic: Epic<PlaylistAction | TrackAction> = (actions$) =>
+export const startSagaEpic: Epic = (actions$) =>
   actions$.pipe(
-    ofType(changeSelectedPlaylistIds.type),
-    map((_) => loadPlaylistTracksBecauseSelectedPlaylistsChanged())
+    ofType(loadPlaylistsSuccess.type),
+    map((_) => loadPlaylistTracksSagaStart())
   );
 
 // prettier-ignore

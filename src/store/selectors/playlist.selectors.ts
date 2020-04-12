@@ -6,6 +6,10 @@ export const getPlaylistState = (state: RootState) => state.playlist;
 
 export const getPlaylistsMap = createSelector(getPlaylistState, (state) => state.playLists);
 
+export const getPlaylists = createSelector(getPlaylistsMap, (playlists) =>
+  Object.values(playlists)
+);
+
 export const getSelectedPlaylistIds = createSelector(
   getPlaylistState,
   (state) => state.selectedPlaylistIds

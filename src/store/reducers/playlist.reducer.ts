@@ -1,13 +1,15 @@
 import {
+    loadPagedTracksForPlaylistSuccess, LoadPlaylistTracksSagaAction
+} from '../actions/load-playlist-tracks.saga.actions';
+import {
     changeSelectedPlaylistIds, loadPlaylistsSuccess, PlaylistAction
 } from '../actions/playlist.actions';
-import { loadPlaylistTracksSuccess, TrackAction } from '../actions/track.actions';
 import { initialPlaylistState, PlaylistState } from '../state/playlist.state';
 import { toStringMap } from '../utils';
 
 export function playlistReducer(
   state = initialPlaylistState,
-  action: PlaylistAction | TrackAction
+  action: PlaylistAction | LoadPlaylistTracksSagaAction
 ): PlaylistState {
   switch (action.type) {
     case loadPlaylistsSuccess.type:
@@ -18,7 +20,7 @@ export function playlistReducer(
           ...toStringMap(action.payload.playLists, (p) => p.id),
         },
       };
-    case loadPlaylistTracksSuccess.type:
+    case loadPagedTracksForPlaylistSuccess.type:
       const playlistToUpdate = state.playLists[action.payload.playlistId];
       return {
         ...state,
