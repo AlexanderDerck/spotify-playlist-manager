@@ -10,9 +10,7 @@ import { getBearerToken } from '../selectors';
 
 export function* runLoadTracksTasksSaga() {
   while (true) {
-    yield takeEvery(runLoadTracksForPlaylistTask, (action) =>
-      runLoadTracksTasksFlow(action.payload.playlistId, action.payload.page)
-    );
+    yield takeEvery(runLoadTracksForPlaylistTask, (action) => runLoadTracksTasksFlow(action.payload.playlistId, action.payload.page));
   }
 }
 
@@ -29,11 +27,7 @@ function* runLoadTracksTasksFlow(playlistId: string, page: number) {
   }
 }
 
-function getPlaylistTracks(
-  playlistId: string,
-  bearerToken: string,
-  page: number
-): Promise<PlaylistTrackResponse> {
+function getPlaylistTracks(playlistId: string, bearerToken: string, page: number): Promise<PlaylistTrackResponse> {
   const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?`;
   const offset = page * environment.GetTracksPagingLimit;
   const queryParams = new URLSearchParams({

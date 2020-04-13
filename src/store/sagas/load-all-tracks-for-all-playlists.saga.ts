@@ -24,9 +24,7 @@ function* loadAllTracksForAllPlaylistsFlow() {
   }
 
   while (playlistsLoading.size > 0) {
-    const completedPlaylist = yield* take<ReturnType<typeof loadAllTracksForPlaylistCompleted>>(
-      loadAllTracksForPlaylistCompleted
-    );
+    const completedPlaylist = yield* take<ReturnType<typeof loadAllTracksForPlaylistCompleted>>(loadAllTracksForPlaylistCompleted);
     playlistsLoading.delete(completedPlaylist.payload.playlistId);
   }
 

@@ -8,9 +8,7 @@ import { getPlaylistsMap } from '../selectors';
 
 export function* loadAllTracksForPlaylistSaga() {
   while (true) {
-    yield takeEvery(loadAllTracksForPlaylist, (action) =>
-      loadAllTracksForPlaylistFlow(action.payload.playlistId)
-    );
+    yield takeEvery(loadAllTracksForPlaylist, (action) => loadAllTracksForPlaylistFlow(action.payload.playlistId));
   }
 }
 
@@ -26,13 +24,8 @@ function* loadAllTracksForPlaylistFlow(playlistId: string) {
   }
 
   while (pagesLoading.size > 0) {
-    type ActionTypes = ReturnType<
-      typeof runLoadTracksForPlaylistTaskCompleted | typeof runLoadTracksForPlaylistTaskErrored
-    >;
-    const taskCompletedAction = yield* take<ActionTypes>([
-      runLoadTracksForPlaylistTaskCompleted,
-      runLoadTracksForPlaylistTaskErrored,
-    ]);
+    type ActionTypes = ReturnType<typeof runLoadTracksForPlaylistTaskCompleted | typeof runLoadTracksForPlaylistTaskErrored>;
+    const taskCompletedAction = yield* take<ActionTypes>([runLoadTracksForPlaylistTaskCompleted, runLoadTracksForPlaylistTaskErrored]);
 
     if (taskCompletedAction.payload.playlistId === playlistId) {
       pagesLoading.delete(taskCompletedAction.payload.page);

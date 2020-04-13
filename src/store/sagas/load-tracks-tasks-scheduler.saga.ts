@@ -35,10 +35,7 @@ function* queueTracksTaskFlow() {
 }
 
 function* completedTracksTaskFlow() {
-  const requestChannel = yield actionChannel([
-    runLoadTracksForPlaylistTaskCompleted,
-    runLoadTracksForPlaylistTaskErrored,
-  ]);
+  const requestChannel = yield actionChannel([runLoadTracksForPlaylistTaskCompleted, runLoadTracksForPlaylistTaskErrored]);
 
   while (true) {
     yield take(requestChannel);
