@@ -3,7 +3,7 @@ import createSagaMiddleware from 'redux-saga';
 import { Action, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { environment } from '../environment';
 import {
-    queueLoadTracksForPlaylistTask, runLoadTracksForPlaylistTask,
+    queueLoadTracksForPlaylistTask, RootAction, runLoadTracksForPlaylistTask,
     runLoadTracksForPlaylistTaskCompleted, runLoadTracksForPlaylistTaskErrored
 } from './actions';
 import { rootEpic } from './root-epic';
@@ -24,6 +24,7 @@ export const store = configureStore({
   ],
   devTools: {
     predicate: actionsDevtoolsFilter,
+    actionSanitizer: actionSanitizer as any,
   },
 });
 
@@ -44,4 +45,18 @@ function actionsDevtoolsFilter(_, action: Action): boolean {
     default:
       return true;
   }
+}
+
+function actionSanitizer(action: RootAction) {
+  // The full 'tracks' info takes a lot of space in the devtools store, so just show length
+  if (action.type === runLoadTracksForPlaylistTaskCompleted.type) {
+    return {
+      type: runLoadTracksForPlaylistTaskCompleted.type,
+      playlistId: action.payload.playlistId,
+      page: action.payload.page,
+      tracksLength: action.payload.tracks.length,
+    };
+  }
+
+  return action;
 }
