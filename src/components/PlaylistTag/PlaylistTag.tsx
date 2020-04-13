@@ -30,7 +30,7 @@ export const PlaylistTag: React.FunctionComponent<PlaylistTagProps> = ({ playlis
 
 function createAvatar(imageUrl: string) {
   if (!imageUrl) {
-    return <FontAwesomeIcon icon={faSpotify} size="lg" className={styles.spotifyIcon} />;
+    return <FontAwesomeIcon icon={faSpotify} size="2x" className={styles.spotifyIcon} />;
   }
 
   return <Avatar src={imageUrl} size="small"></Avatar>;
