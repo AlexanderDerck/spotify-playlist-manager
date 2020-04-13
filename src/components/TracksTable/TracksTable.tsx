@@ -2,7 +2,7 @@ import { Table, Typography } from 'antd';
 import Column from 'antd/lib/table/Column';
 import * as React from 'react';
 import { Playlist, Track } from '../../models';
-import { PlaylistTag } from '../PlaylistTag/PlaylistTag';
+import { PlaylistTags } from '../PlaylistTags/PlaylistTags';
 
 const { Text } = Typography;
 
@@ -60,8 +60,8 @@ function getArtistNames(track: Track): string {
   return track.artists.map((a) => a.name).join(', ');
 }
 
-function renderPlaylistTagsForTrack(track: Track, playlists: Playlist[]): React.ReactElement[] {
-  return playlists
-    .filter((p) => p.trackIds.includes(track.id))
-    .map((playlist) => <PlaylistTag key={playlist.id} playlist={playlist}></PlaylistTag>);
+function renderPlaylistTagsForTrack(track: Track, playlists: Playlist[]): React.ReactElement {
+  const playlistsForTrack = playlists.filter((p) => p.trackIds.includes(track.id));
+
+  return <PlaylistTags playlists={playlistsForTrack}></PlaylistTags>;
 }

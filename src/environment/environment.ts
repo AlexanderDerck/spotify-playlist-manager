@@ -1,6 +1,6 @@
 export const environment = {
   GetPlaylistsPagingLimit: 50,
   GetTracksPagingLimit: 100,
-  ConcurrentRequestLimit: 3,
+  ConcurrentRequestLimit: 5,
   EnableTracing: true,
 };
