@@ -1,4 +1,6 @@
+import { differenceInMilliseconds } from 'date-fns';
 import { put, select, take, takeLatest } from 'typed-redux-saga';
+import { durationFromMilliseconds } from '../../functions';
 import {
     loadAllTracksForAllPlaylists, loadAllTracksForAllPlaylistsCompleted, loadAllTracksForPlaylist,
     loadAllTracksForPlaylistCompleted
@@ -12,6 +14,7 @@ export function* loadAllTracksForAllPlaylistsSaga() {
 }
 
 function* loadAllTracksForAllPlaylistsFlow() {
+  const timeStarted = new Date();
   const playlists = yield* select(getPlaylists);
   const playlistsLoading = new Set<string>();
 
@@ -27,5 +30,8 @@ function* loadAllTracksForAllPlaylistsFlow() {
     playlistsLoading.delete(completedPlaylist.payload.playlistId);
   }
 
-  yield put(loadAllTracksForAllPlaylistsCompleted());
+  const timeEnded = new Date();
+  const elapsed = durationFromMilliseconds(differenceInMilliseconds(timeEnded, timeStarted));
+
+  yield put(loadAllTracksForAllPlaylistsCompleted({ elapsed }));
 }

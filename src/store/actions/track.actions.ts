@@ -1,9 +1,12 @@
 import { createAction } from '@reduxjs/toolkit';
-import { LoadTracksForPlaylistTask, Track } from '../../models';
+import { Duration, LoadTracksForPlaylistTask, Track } from '../../models';
 import { actionTypes, props } from '../utils';
 
 export const loadAllTracksForAllPlaylists = createAction('[Track] Load all tracks for all playlists');
-export const loadAllTracksForAllPlaylistsCompleted = createAction('[Track] Load all tracks for all playlists completed');
+export const loadAllTracksForAllPlaylistsCompleted = createAction(
+  '[Track] Load all tracks for all playlists completed',
+  props<{ elapsed: Duration }>()
+);
 export const loadAllTracksForPlaylist = createAction('[Track] Load all tracks for playlist', props<{ playlistId: string }>());
 export const loadAllTracksForPlaylistCompleted = createAction('[Track] Load all tracks for playlist completed', props<{ playlistId: string }>());
 export const queueLoadTracksForPlaylistTask = createAction('[Track] Queue LoadTracksForPlaylistTask', props<LoadTracksForPlaylistTask>());
