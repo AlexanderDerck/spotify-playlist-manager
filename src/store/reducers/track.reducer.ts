@@ -5,12 +5,13 @@ import { toStringMap } from '../utils';
 export function trackReducer(state = initialTrackState, action: TrackAction): TrackState {
   switch (action.type) {
     case runLoadTracksForPlaylistTaskCompleted.type:
+      const updatedTracks = {
+        ...state.tracks,
+        ...toStringMap(action.payload.tracks, (t) => t.id),
+      };
       return {
         ...state,
-        tracks: toStringMap(
-          [...Object.values(state.tracks), ...action.payload.tracks],
-          (t) => t.id
-        ),
+        tracks: updatedTracks,
       };
 
     default:
