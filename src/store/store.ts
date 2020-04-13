@@ -3,7 +3,8 @@ import createSagaMiddleware from 'redux-saga';
 import { Action, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { environment } from '../environment';
 import {
-    loadPagedTracksForPlaylist, loadPagedTracksForPlaylistError, loadPagedTracksForPlaylistSuccess
+    queueLoadTracksForPlaylistTask, runLoadTracksForPlaylistTask,
+    runLoadTracksForPlaylistTaskCompleted, runLoadTracksForPlaylistTaskErrored
 } from './actions';
 import { rootEpic } from './root-epic';
 import { rootReducer } from './root-reducer';
@@ -31,9 +32,10 @@ function actionsDevtoolsFilter(_, action: Action): boolean {
   }
 
   switch (action.type) {
-    case loadPagedTracksForPlaylist.type:
-    case loadPagedTracksForPlaylistSuccess.type:
-    case loadPagedTracksForPlaylistError.type:
+    case queueLoadTracksForPlaylistTask.type:
+    case runLoadTracksForPlaylistTask.type:
+    case runLoadTracksForPlaylistTaskCompleted.type:
+    case runLoadTracksForPlaylistTaskErrored.type:
       return false;
     default:
       return true;
