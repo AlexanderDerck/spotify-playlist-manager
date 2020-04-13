@@ -8,13 +8,10 @@ const { Text } = Typography;
 
 export interface TracksTableProps {
   tracks: Track[];
-  selectedPlaylists: Playlist[];
+  playlists: Playlist[];
 }
 
-export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
-  tracks,
-  selectedPlaylists,
-}) => {
+export const TracksTable: React.FunctionComponent<TracksTableProps> = ({ tracks, playlists }) => {
   const nameSorter = {
     compare: (a, b) => a.name.localeCompare(b.name),
     multiple: 1,
@@ -28,8 +25,7 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
     compare: (a, b) => a.album.name.localeCompare(b.album.name),
     multiple: 1,
   };
-  const playlistRenderer = (_, track: Track) =>
-    renderPlaylistTagsForTrack(track, selectedPlaylists);
+  const playlistRenderer = (_, track: Track) => renderPlaylistTagsForTrack(track, playlists);
 
   return (
     <Table dataSource={tracks} tableLayout="fixed" size="small" rowKey={(t) => t.id}>

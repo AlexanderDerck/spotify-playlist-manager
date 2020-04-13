@@ -18,7 +18,7 @@ export const store = configureStore({
   preloadedState: initialRootState,
   reducer: rootReducer,
   middleware: [
-    ...getDefaultMiddleware({ immutableCheck: true, serializableCheck: false, thunk: false }),
+    ...getDefaultMiddleware({ immutableCheck: false, serializableCheck: false, thunk: false }),
     epicMiddleware,
     sagaMiddleware,
   ],

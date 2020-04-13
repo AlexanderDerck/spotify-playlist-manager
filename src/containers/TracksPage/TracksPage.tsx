@@ -71,10 +71,7 @@ export class TracksPage extends React.Component<TracksPageProps> {
           </Row>
           <Row>
             <Col>
-              <TracksTable
-                tracks={this.props.tracks}
-                selectedPlaylists={this.props.selectedPlaylists}
-              ></TracksTable>
+              <TracksTable tracks={this.props.tracks} playlists={playlists}></TracksTable>
             </Col>
           </Row>
         </Space>
