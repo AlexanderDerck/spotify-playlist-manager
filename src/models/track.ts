@@ -10,5 +10,5 @@ export interface Track {
   artists: Artist[];
   isLocal: boolean;
   spotifyId: string;
-  addedAt: Date;
+  spotifyUri: string;
 }

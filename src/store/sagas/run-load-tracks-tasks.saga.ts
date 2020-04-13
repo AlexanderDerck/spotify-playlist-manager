@@ -39,7 +39,7 @@ function getPlaylistTracks(
   const queryParams = new URLSearchParams({
     limit: environment.GetTracksPagingLimit.toString(),
     offset: offset.toString(),
-    fields: 'total,limit,items(track(id,name,album,artists))',
+    fields: 'total,limit,items(track(id,name,album,artists,uri),is_local)',
   });
 
   const headers = new Headers();
