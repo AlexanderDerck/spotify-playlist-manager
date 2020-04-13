@@ -17,7 +17,11 @@ const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   preloadedState: initialRootState,
   reducer: rootReducer,
-  middleware: [...getDefaultMiddleware(), epicMiddleware, sagaMiddleware],
+  middleware: [
+    ...getDefaultMiddleware({ immutableCheck: true, serializableCheck: false, thunk: false }),
+    epicMiddleware,
+    sagaMiddleware,
+  ],
   devTools: {
     predicate: actionsDevtoolsFilter,
   },
