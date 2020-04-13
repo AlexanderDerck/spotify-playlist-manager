@@ -1,4 +1,4 @@
-import { all, call, put, select, take } from 'typed-redux-saga';
+import { actionChannel, all, call, put, select, take } from 'typed-redux-saga';
 import { environment } from '../../environment';
 import {
     queueLoadTracksForPlaylistTask, runLoadTracksForPlaylistTask,
@@ -13,8 +13,10 @@ export function* loadTracksTasksSchedulerSaga() {
 }
 
 function* queueTracksTaskFlow() {
+  const requestChannel = yield actionChannel(queueLoadTracksForPlaylistTask);
+
   while (true) {
-    yield take(queueLoadTracksForPlaylistTask);
+    yield take(requestChannel);
     const runningTasks = yield* select(getRunningLoadTrackTasks);
 
     if (runningTasks.length >= environment.ConcurrentRequestLimit) {
@@ -33,8 +35,13 @@ function* queueTracksTaskFlow() {
 }
 
 function* completedTracksTaskFlow() {
+  const requestChannel = yield actionChannel([
+    runLoadTracksForPlaylistTaskCompleted,
+    runLoadTracksForPlaylistTaskErrored,
+  ]);
+
   while (true) {
-    yield take([runLoadTracksForPlaylistTaskCompleted, runLoadTracksForPlaylistTaskErrored]);
+    yield take(requestChannel);
     const queuedTasks = yield* select(getQueuedLoadTrackTasks);
 
     if (queuedTasks.length) {
