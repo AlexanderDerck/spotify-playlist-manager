@@ -4,7 +4,7 @@
   "tabWidth": 2,
   "overrides": [
     {
-      "files": ["*.html", "*.json", "*.actions.ts", "*.spec.ts"],
+      "files": ["*.html", "*.json", "*.actions.ts", "*.spec.ts", "*.saga.ts"],
       "options": {
         "printWidth": 150
       }
