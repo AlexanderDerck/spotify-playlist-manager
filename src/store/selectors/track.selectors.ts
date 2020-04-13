@@ -1,28 +1,25 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { Track } from '../../models';
 import { RootState } from '../root-state';
 import { getSelectedPlaylists } from './playlist.selectors';
 
 export const getTrackState = (state: RootState) => state.track;
 
-export const getTracksMap = createSelector(getTrackState, (state) => state.tracks);
+export const getTracksMap = createSelector(
+  getTrackState,
+  (state) => new Map(Object.entries(state.tracks))
+);
 
-export const getTracksForSelectedPlaylistIds = createSelector(
+export const getFilteredTracksForSelectedPlaylistIds = createSelector(
   getSelectedPlaylists,
   getTracksMap,
-  (playlists, tracksMap) => {
-    const uniqueTracksById = playlists
-      .flatMap((p) => p.trackIds)
-      .reduce<{ [trackId: string]: Track }>(
-        (tracksById, trackId) => ({ ...tracksById, [trackId]: tracksMap[trackId] }),
-        {}
-      );
-
-    for (const trackId in uniqueTracksById) {
-      uniqueTracksById[trackId] ||
-        console.warn(`No corresponding track found for trackId: '${trackId}'`);
+  (selectedPlaylists, tracksMap) => {
+    // If no playlists selected, show all songs
+    if (selectedPlaylists.length === 0) {
+      return [...tracksMap.values()];
     }
 
-    return Object.values(uniqueTracksById).filter((t) => !!t);
+    return [...new Set(selectedPlaylists.flatMap((p) => p.trackIds))].map((trackId) =>
+      tracksMap.get(trackId)
+    );
   }
 );

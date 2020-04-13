@@ -7,9 +7,8 @@ import { Playlist, Track } from '../../models';
 import { changeSelectedPlaylistIds, loadPlaylists } from '../../store/actions';
 import { RootState } from '../../store/root-state';
 import {
-    getPlaylistsMap, getSelectedPlaylists, getTracksForSelectedPlaylistIds
+    getFilteredTracksForSelectedPlaylistIds, getPlaylistsMap, getSelectedPlaylists
 } from '../../store/selectors';
-import { StringMap } from '../../store/utils';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -17,9 +16,9 @@ const { Option } = Select;
 export interface TracksPageProps extends StateProps, DispatchProps {}
 
 interface StateProps {
-  playlistsMap: StringMap<Playlist>;
+  playlistsMap: Map<string, Playlist>;
   selectedPlaylists: Playlist[];
-  tracksForSelectedPlaylists: Track[];
+  tracks: Track[];
 }
 interface DispatchProps {
   loadPlaylists(): void;
@@ -41,13 +40,14 @@ export class TracksPage extends React.Component<TracksPageProps> {
   }
 
   render() {
-    const playlistOptions = Object.values(this.props.playlistsMap).map((playlist) => (
+    const playlists = [...this.props.playlistsMap.values()];
+    const playlistOptions = playlists.map((playlist) => (
       <Option value={playlist.id} key={playlist.id}>
         {playlist.name}
       </Option>
     ));
     const filterOption = (inputValue: string, option: any) =>
-      this.props.playlistsMap[option.key].name.toLowerCase().includes(inputValue.toLowerCase());
+      this.props.playlistsMap.get(option.key).name.toLowerCase().includes(inputValue.toLowerCase());
 
     return (
       <React.Fragment>
@@ -58,9 +58,9 @@ export class TracksPage extends React.Component<TracksPageProps> {
               <label>Selected playlists</label>
               <Select
                 value={this.props.selectedPlaylists.map((p) => p.id)}
-                onChange={(e) => this.changeSelectedPlaylistIds(e.toString().split(','))}
+                onChange={(e) => this.changeSelectedPlaylistIds(e.filter((id) => !!id))}
                 filterOption={filterOption}
-                placeholder="Select playlists to search in"
+                placeholder="Filter on playlists"
                 mode="tags"
                 size="large"
                 className="mt-1 w-100"
@@ -72,7 +72,7 @@ export class TracksPage extends React.Component<TracksPageProps> {
           <Row>
             <Col>
               <TracksTable
-                tracks={this.props.tracksForSelectedPlaylists}
+                tracks={this.props.tracks}
                 selectedPlaylists={this.props.selectedPlaylists}
               ></TracksTable>
             </Col>
@@ -86,7 +86,7 @@ export class TracksPage extends React.Component<TracksPageProps> {
 const mapState = (state: RootState): StateProps => ({
   playlistsMap: getPlaylistsMap(state),
   selectedPlaylists: getSelectedPlaylists(state),
-  tracksForSelectedPlaylists: getTracksForSelectedPlaylistIds(state),
+  tracks: getFilteredTracksForSelectedPlaylistIds(state),
 });
 const mapDispatch: (dispatch: Dispatch) => DispatchProps = (dispatch) => ({
   loadPlaylists: () => dispatch(loadPlaylists()),

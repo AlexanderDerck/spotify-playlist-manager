@@ -14,7 +14,7 @@ export function* loadAllTracksForPlaylistSaga() {
 
 function* loadAllTracksForPlaylistFlow(playlistId: string) {
   const playlistsMap = yield* select(getPlaylistsMap);
-  const playlist = playlistsMap[playlistId];
+  const playlist = playlistsMap.get(playlistId);
   const requestsNeeded = Math.ceil(playlist.totalTracks / environment.GetTracksPagingLimit);
   const pagesLoading = new Set<number>();
 

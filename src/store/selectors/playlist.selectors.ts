@@ -4,11 +4,14 @@ import { RootState } from '../root-state';
 
 export const getPlaylistState = (state: RootState) => state.playlist;
 
-export const getPlaylistsMap = createSelector(getPlaylistState, (state) => state.playLists);
-
-export const getPlaylists = createSelector(getPlaylistsMap, (playlists) =>
-  Object.values(playlists)
+export const getPlaylistsMap = createSelector(
+  getPlaylistState,
+  (state) => new Map(Object.entries(state.playLists))
 );
+
+export const getPlaylists = createSelector(getPlaylistsMap, (playlistsMap) => [
+  ...playlistsMap.values(),
+]);
 
 export const getSelectedPlaylistIds = createSelector(
   getPlaylistState,
