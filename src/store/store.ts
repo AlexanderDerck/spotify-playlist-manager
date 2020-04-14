@@ -1,10 +1,11 @@
 import { createEpicMiddleware } from 'redux-observable';
 import createSagaMiddleware from 'redux-saga';
-import { Action, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { Action, configureStore, getDefaultMiddleware, PayloadAction } from '@reduxjs/toolkit';
 import { environment } from '../environment';
 import {
-    queueLoadTracksForPlaylistTask, RootAction, runLoadTracksForPlaylistTask,
-    runLoadTracksForPlaylistTaskCompleted, runLoadTracksForPlaylistTaskErrored
+    batchReduceLoadTracksForPlaylistTask, queueLoadTracksForPlaylistTask, RootAction,
+    runLoadTracksForPlaylistTask, runLoadTracksForPlaylistTaskCompleted,
+    runLoadTracksForPlaylistTaskErrored
 } from './actions';
 import { rootEpic } from './root-epic';
 import { rootReducer } from './root-reducer';
@@ -47,14 +48,25 @@ function actionsDevtoolsFilter(_, action: Action): boolean {
   }
 }
 
-function actionSanitizer(action: RootAction) {
+function actionSanitizer(action: RootAction & PayloadAction<any>): PayloadAction<any> {
   // The full 'tracks' info takes a lot of space in the devtools store, so just show length
   if (action.type === runLoadTracksForPlaylistTaskCompleted.type) {
     return {
       type: runLoadTracksForPlaylistTaskCompleted.type,
-      playlistId: action.payload.playlistId,
-      page: action.payload.page,
-      tracksLength: action.payload.tracks.length,
+      payload: {
+        playlistId: action.payload.playlistId,
+        page: action.payload.page,
+        tracksLength: action.payload.tracks.length,
+      },
+    };
+  }
+
+  if (action.type === batchReduceLoadTracksForPlaylistTask.type) {
+    return {
+      type: batchReduceLoadTracksForPlaylistTask.type,
+      payload: {
+        tracksLength: action.payload.tracks.length,
+      },
     };
   }
 

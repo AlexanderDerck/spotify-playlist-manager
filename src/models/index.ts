@@ -2,6 +2,8 @@ export * from './album';
 export * from './api-info';
 export * from './artist';
 export * from './duration';
+export * from './load-tracks-for-playlist-error';
+export * from './load-tracks-for-playlist-result';
 export * from './load-tracks-for-playlist-task';
 export * from './playlist';
 export * from './spotify-image';

@@ -1,10 +1,10 @@
-import { runLoadTracksForPlaylistTaskCompleted, searchSong, TrackAction } from '../actions';
+import { batchReduceLoadTracksForPlaylistTask, searchSong, TrackAction } from '../actions';
 import { initialTrackState, TrackState } from '../state/track.state';
 import { toStringMap } from '../utils';
 
 export function trackReducer(state = initialTrackState, action: TrackAction): TrackState {
   switch (action.type) {
-    case runLoadTracksForPlaylistTaskCompleted.type:
+    case batchReduceLoadTracksForPlaylistTask.type:
       const updatedTracks = {
         ...state.tracks,
         ...toStringMap(action.payload.tracks, (t) => t.id),

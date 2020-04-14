@@ -1,5 +1,8 @@
 import { createAction } from '@reduxjs/toolkit';
-import { Duration, LoadTracksForPlaylistTask, Track } from '../../models';
+import {
+    Duration, LoadTracksForPlaylistError, LoadTracksForPlaylistResult, LoadTracksForPlaylistTask,
+    Track
+} from '../../models';
 import { actionTypes, props } from '../utils';
 
 export const loadAllTracksForAllPlaylists = createAction('[Track] Load all tracks for all playlists');
@@ -13,12 +16,10 @@ export const queueLoadTracksForPlaylistTask = createAction('[Track] Queue LoadTr
 export const runLoadTracksForPlaylistTask = createAction('[Track] Run LoadTracksForPlaylistTask', props<LoadTracksForPlaylistTask>());
 export const runLoadTracksForPlaylistTaskCompleted = createAction(
   '[Track] Run LoadTracksForPlaylistTask completed',
-  props<LoadTracksForPlaylistTask & { tracks: Track[] }>()
+  props<LoadTracksForPlaylistResult>()
 );
-export const runLoadTracksForPlaylistTaskErrored = createAction(
-  '[Track] Run LoadTracksForPlaylistTask errored',
-  props<LoadTracksForPlaylistTask & { error: string }>()
-);
+export const runLoadTracksForPlaylistTaskErrored = createAction('[Track] Run LoadTracksForPlaylistTask errored', props<LoadTracksForPlaylistError>());
+export const batchReduceLoadTracksForPlaylistTask = createAction('[Track] Batch reduce LoadTracksForPlaylistTask', props<{ tracks: Track[] }>());
 export const searchSong = createAction('[Track] Search song', props<{ searchTerm: string }>());
 
 const actionCreatorMap = {
@@ -30,6 +31,7 @@ const actionCreatorMap = {
   runLoadTracksForPlaylistTask,
   runLoadTracksForPlaylistTaskCompleted,
   runLoadTracksForPlaylistTaskErrored,
+  batchReduceLoadTracksForPlaylistTask,
   searchSong,
 };
 const all = actionTypes(actionCreatorMap);

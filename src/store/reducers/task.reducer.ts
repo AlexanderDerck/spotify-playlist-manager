@@ -1,6 +1,7 @@
 import {
-    queueLoadTracksForPlaylistTask, runLoadTracksForPlaylistTask,
-    runLoadTracksForPlaylistTaskCompleted, runLoadTracksForPlaylistTaskErrored, TrackAction
+    batchReduceLoadTracksForPlaylistTask, queueLoadTracksForPlaylistTask,
+    runLoadTracksForPlaylistTask, runLoadTracksForPlaylistTaskCompleted,
+    runLoadTracksForPlaylistTaskErrored, TrackAction
 } from '../actions';
 import { initialTaskState, TaskState } from '../state/task.state';
 
@@ -20,12 +21,24 @@ export function taskReducer(state = initialTaskState, action: TrackAction): Task
         ),
       };
     case runLoadTracksForPlaylistTaskCompleted.type:
+      return {
+        ...state,
+        completedLoadTrackTasks: [...state.completedLoadTrackTasks, { ...action.payload }],
+        runningLoadTrackTasks: state.runningLoadTrackTasks.filter(
+          (t) => t.playlistId !== action.payload.playlistId || t.page !== action.payload.page
+        ),
+      };
     case runLoadTracksForPlaylistTaskErrored.type:
       return {
         ...state,
         runningLoadTrackTasks: state.runningLoadTrackTasks.filter(
           (t) => t.playlistId !== action.payload.playlistId || t.page !== action.payload.page
         ),
+      };
+    case batchReduceLoadTracksForPlaylistTask.type:
+      return {
+        ...state,
+        completedLoadTrackTasks: [],
       };
     default:
       return state;

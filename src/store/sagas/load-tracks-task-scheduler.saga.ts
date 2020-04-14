@@ -6,7 +6,7 @@ import {
 } from '../actions';
 import { getQueuedLoadTrackTasks, getRunningLoadTrackTasks } from '../selectors';
 
-export function* loadTracksTasksSchedulerSaga() {
+export function* loadTracksTaskSchedulerSaga() {
   while (true) {
     yield all([call(queueTracksTaskFlow), call(completedTracksTaskFlow)]);
   }

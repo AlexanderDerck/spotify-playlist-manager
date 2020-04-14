@@ -12,3 +12,8 @@ export const getQueuedLoadTrackTasks = createSelector(
   getTaskState,
   (state) => state.queuedLoadTrackTasks
 );
+
+export const getCompletedLoadTrackTasks = createSelector(
+  getTaskState,
+  (state) => state.completedLoadTrackTasks
+);

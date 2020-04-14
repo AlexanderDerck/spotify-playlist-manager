@@ -1,5 +1,7 @@
 import { put, select, take, takeEvery } from 'typed-redux-saga';
+import { PayloadAction } from '@reduxjs/toolkit';
 import { environment } from '../../environment';
+import { LoadTracksForPlaylistError, LoadTracksForPlaylistResult } from '../../models';
 import {
     loadAllTracksForPlaylist, loadAllTracksForPlaylistCompleted, queueLoadTracksForPlaylistTask,
     runLoadTracksForPlaylistTaskCompleted, runLoadTracksForPlaylistTaskErrored
@@ -24,8 +26,10 @@ function* loadAllTracksForPlaylistFlow(playlistId: string) {
   }
 
   while (pagesLoading.size > 0) {
-    type ActionTypes = ReturnType<typeof runLoadTracksForPlaylistTaskCompleted | typeof runLoadTracksForPlaylistTaskErrored>;
-    const taskCompletedAction = yield* take<ActionTypes>([runLoadTracksForPlaylistTaskCompleted, runLoadTracksForPlaylistTaskErrored]);
+    const taskCompletedAction = yield* take<PayloadAction<LoadTracksForPlaylistResult | LoadTracksForPlaylistError>>([
+      runLoadTracksForPlaylistTaskCompleted,
+      runLoadTracksForPlaylistTaskErrored,
+    ]);
 
     if (taskCompletedAction.payload.playlistId === playlistId) {
       pagesLoading.delete(taskCompletedAction.payload.page);
