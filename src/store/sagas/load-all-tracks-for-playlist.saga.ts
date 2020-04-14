@@ -1,7 +1,5 @@
 import { put, select, take, takeEvery } from 'typed-redux-saga';
-import { PayloadAction } from '@reduxjs/toolkit';
 import { environment } from '../../environment';
-import { LoadTracksForPlaylistError, LoadTracksForPlaylistResult } from '../../models';
 import {
     loadAllTracksForPlaylist, loadAllTracksForPlaylistCompleted, queueLoadTracksForPlaylistTask,
     runLoadTracksForPlaylistTaskCompleted, runLoadTracksForPlaylistTaskErrored
@@ -19,6 +17,7 @@ function* loadAllTracksForPlaylistFlow(playlistId: string) {
   const playlist = playlistsMap.get(playlistId);
   const requestsNeeded = Math.ceil(playlist.totalTracks / environment.GetTracksPagingLimit);
   const pagesLoading = new Set<number>();
+  const tracks = [];
 
   for (let i = 0; i < requestsNeeded; i++) {
     pagesLoading.add(i);
@@ -26,15 +25,19 @@ function* loadAllTracksForPlaylistFlow(playlistId: string) {
   }
 
   while (pagesLoading.size > 0) {
-    const taskCompletedAction = yield* take<PayloadAction<LoadTracksForPlaylistResult | LoadTracksForPlaylistError>>([
+    const taskCompletedAction = yield* take<ReturnType<typeof runLoadTracksForPlaylistTaskCompleted | typeof runLoadTracksForPlaylistTaskErrored>>([
       runLoadTracksForPlaylistTaskCompleted,
       runLoadTracksForPlaylistTaskErrored,
     ]);
 
     if (taskCompletedAction.payload.playlistId === playlistId) {
       pagesLoading.delete(taskCompletedAction.payload.page);
+
+      if (taskCompletedAction.type === runLoadTracksForPlaylistTaskCompleted.type) {
+        tracks.push(...taskCompletedAction.payload.tracks);
+      }
     }
   }
 
-  yield put(loadAllTracksForPlaylistCompleted({ playlistId }));
+  yield put(loadAllTracksForPlaylistCompleted({ playlistId, tracks }));
 }

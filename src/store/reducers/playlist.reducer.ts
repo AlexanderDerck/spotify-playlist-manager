@@ -1,4 +1,4 @@
-import { runLoadTracksForPlaylistTaskCompleted, TrackAction } from '../actions';
+import { loadAllTracksForPlaylistCompleted, TrackAction } from '../actions';
 import {
     changeSelectedPlaylistIds, loadPlaylistsSuccess, PlaylistAction
 } from '../actions/playlist.actions';
@@ -18,7 +18,7 @@ export function playlistReducer(
           ...toStringMap(action.payload.playLists, (p) => p.id),
         },
       };
-    case runLoadTracksForPlaylistTaskCompleted.type:
+    case loadAllTracksForPlaylistCompleted.type:
       const playlistToUpdate = state.playLists[action.payload.playlistId];
       return {
         ...state,

@@ -11,7 +11,10 @@ export const loadAllTracksForAllPlaylistsCompleted = createAction(
   props<{ elapsed: Duration }>()
 );
 export const loadAllTracksForPlaylist = createAction('[Track] Load all tracks for playlist', props<{ playlistId: string }>());
-export const loadAllTracksForPlaylistCompleted = createAction('[Track] Load all tracks for playlist completed', props<{ playlistId: string }>());
+export const loadAllTracksForPlaylistCompleted = createAction(
+  '[Track] Load all tracks for playlist completed',
+  props<{ playlistId: string; tracks: Track[] }>()
+);
 export const queueLoadTracksForPlaylistTask = createAction('[Track] Queue LoadTracksForPlaylistTask', props<LoadTracksForPlaylistTask>());
 export const runLoadTracksForPlaylistTask = createAction('[Track] Run LoadTracksForPlaylistTask', props<LoadTracksForPlaylistTask>());
 export const runLoadTracksForPlaylistTaskCompleted = createAction(
