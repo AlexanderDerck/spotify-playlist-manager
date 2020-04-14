@@ -43,7 +43,7 @@ function filterTracksForSearchTerm(tracks: Track[], searchTerm: string) {
     return tracks;
   }
 
-  const searchTermLowerCase = searchTerm.toLowerCase();
+  const searchTermLowerCase = searchTerm.replace(/\s/g, '').toLowerCase();
 
   return tracks.filter((t) =>
     buildTrackSearchString(t).toLowerCase().includes(searchTermLowerCase)
@@ -51,5 +51,7 @@ function filterTracksForSearchTerm(tracks: Track[], searchTerm: string) {
 }
 
 function buildTrackSearchString(track: Track) {
-  return track.name + track.artists.flatMap((a) => a.name).join() + track.album.name;
+  return (track.name + track.artists.flatMap((a) => a.name).join() + track.album.name)
+    .replace(/\s/g, '')
+    .toLowerCase();
 }
