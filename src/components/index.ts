@@ -1,3 +1,4 @@
+export * from './LoadPlaylistsProgress/LoadPlaylistsProgress';
 export * from './PageHeader/PageHeader';
 export * from './PlaylistTag/PlaylistTag';
 export * from './PlaylistTags/PlaylistTags';

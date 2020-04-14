@@ -3,12 +3,13 @@ import { debounce } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
-import { TracksTable } from '../../components';
+import { LoadPlaylistsProgress, TracksTable } from '../../components';
 import { Playlist, Track } from '../../models';
 import { changeSelectedPlaylistIds, loadPlaylists, searchSong } from '../../store/actions';
 import { RootState } from '../../store/root-state';
 import {
-    getFilteredTracksForTracksPage, getPlaylistsMap, getSelectedPlaylists
+    getFilteredTracksForTracksPage, getNumberOfPlaylistsWithTracksLoaded, getPlaylistsMap,
+    getSelectedPlaylists
 } from '../../store/selectors';
 
 const { Title } = Typography;
@@ -21,6 +22,7 @@ interface StateProps {
   playlistsMap: Map<string, Playlist>;
   selectedPlaylists: Playlist[];
   tracks: Track[];
+  numberOfPlaylistsWithTracksLoaded: number;
 }
 interface DispatchProps {
   loadPlaylists(): void;
@@ -48,6 +50,8 @@ export class TracksPage extends React.Component<TracksPageProps> {
 
   render() {
     const playlists = [...this.props.playlistsMap.values()];
+    const showProgress =
+      playlists.length > 0 && this.props.numberOfPlaylistsWithTracksLoaded < playlists.length;
     const playlistOptions = playlists.map((playlist) => (
       <Option value={playlist.id} key={playlist.id}>
         {playlist.name}
@@ -58,8 +62,15 @@ export class TracksPage extends React.Component<TracksPageProps> {
 
     return (
       <React.Fragment>
+        {showProgress && (
+          <LoadPlaylistsProgress
+            loadedPlaylists={this.props.numberOfPlaylistsWithTracksLoaded}
+            totalPlaylists={playlists.length}
+          ></LoadPlaylistsProgress>
+        )}
+
         <Title level={2}>Tracks</Title>
-        <Space direction="vertical" size="large">
+        <Space direction="vertical">
           <Row>
             <Col span={12}>
               <label>Playlists</label>
@@ -97,6 +108,7 @@ const mapState = (state: RootState): StateProps => ({
   playlistsMap: getPlaylistsMap(state),
   selectedPlaylists: getSelectedPlaylists(state),
   tracks: getFilteredTracksForTracksPage(state),
+  numberOfPlaylistsWithTracksLoaded: getNumberOfPlaylistsWithTracksLoaded(state),
 });
 const mapDispatch: (dispatch: Dispatch) => DispatchProps = (dispatch) => ({
   loadPlaylists: () => dispatch(loadPlaylists()),

@@ -1,4 +1,6 @@
-import { loadAllTracksForPlaylistCompleted, TrackAction } from '../actions';
+import {
+    loadAllTracksForPlaylist, loadAllTracksForPlaylistCompleted, TrackAction
+} from '../actions';
 import {
     changeSelectedPlaylistIds, loadPlaylistsSuccess, PlaylistAction
 } from '../actions/playlist.actions';
@@ -17,6 +19,21 @@ export function playlistReducer(
           ...state.playLists,
           ...toStringMap(action.payload.playLists, (p) => p.id),
         },
+        playlistsTracksLoaded: {
+          ...state.playlistsTracksLoaded,
+          ...action.payload.playLists.reduce(
+            (map, playlist) => ({ ...map, [playlist.id]: false }),
+            {}
+          ),
+        },
+      };
+    case loadAllTracksForPlaylist.type:
+      return {
+        ...state,
+        playlistsTracksLoaded: {
+          ...state.playlistsTracksLoaded,
+          [action.payload.playlistId]: false,
+        },
       };
     case loadAllTracksForPlaylistCompleted.type:
       const playlistToUpdate = state.playLists[action.payload.playlistId];
@@ -28,6 +45,10 @@ export function playlistReducer(
             ...playlistToUpdate,
             trackIds: [...playlistToUpdate.trackIds, ...action.payload.tracks.map((t) => t.id)],
           },
+        },
+        playlistsTracksLoaded: {
+          ...state.playlistsTracksLoaded,
+          [action.payload.playlistId]: true,
         },
       };
     case changeSelectedPlaylistIds.type:
