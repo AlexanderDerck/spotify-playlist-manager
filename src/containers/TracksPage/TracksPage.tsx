@@ -55,12 +55,11 @@ export class TracksPage extends React.Component<TracksPageProps> {
         <Space direction="vertical" size="large">
           <Row>
             <Col span={12}>
-              <label>Selected playlists</label>
               <Select
                 value={this.props.selectedPlaylists.map((p) => p.id)}
                 onChange={(e) => this.changeSelectedPlaylistIds(e.filter((id) => !!id))}
                 filterOption={filterOption}
-                placeholder="Filter on playlists"
+                placeholder="Filter songs for playlists"
                 mode="tags"
                 size="large"
                 className="mt-1 w-100"

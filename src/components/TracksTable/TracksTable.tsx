@@ -28,7 +28,13 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({ tracks,
   const playlistRenderer = (_, track: Track) => renderPlaylistTagsForTrack(track, playlists);
 
   return (
-    <Table dataSource={tracks} tableLayout="fixed" size="small" rowKey={(t) => t.id}>
+    <Table
+      dataSource={tracks}
+      tableLayout="fixed"
+      size="small"
+      rowKey={(t) => t.id}
+      pagination={{ position: ['topRight', 'bottomRight'] as any }}
+    >
       <Column
         title="Name"
         dataIndex="name"
