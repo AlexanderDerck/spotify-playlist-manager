@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { Playlist, Track } from '../../models';
 import { RootState } from '../root-state';
-import { getSelectedPlaylists } from './playlist.selectors';
+import { getSelectedPlaylists, getTrackIdsByPlaylistIdMap } from './playlist.selectors';
 
 export const getTrackState = (state: RootState) => state.track;
 
@@ -18,8 +18,13 @@ export const getFilteredTracksForTracksPage = createSelector(
   getTracksMap,
   getSelectedPlaylists,
   getSearchTerm,
-  (tracksMap, selectedPlaylists, searchTerm) => {
-    const filteredTracks = filterTracksForSelectedPlaylists(tracksMap, selectedPlaylists);
+  getTrackIdsByPlaylistIdMap,
+  (tracksMap, selectedPlaylists, searchTerm, trackIdsByPlaylistIdMap) => {
+    const filteredTracks = filterTracksForSelectedPlaylists(
+      tracksMap,
+      selectedPlaylists,
+      trackIdsByPlaylistIdMap
+    );
 
     return filterTracksForSearchTerm(filteredTracks, searchTerm);
   }
@@ -27,17 +32,32 @@ export const getFilteredTracksForTracksPage = createSelector(
 
 function filterTracksForSelectedPlaylists(
   tracksMap: Map<string, Track>,
-  selectedPlaylists: Playlist[]
+  selectedPlaylists: Playlist[],
+  trackIdsByPlaylistIdMap: Map<string, string[]>
 ): Track[] {
   // If no playlists selected, show all songs
   if (selectedPlaylists.length === 0) {
     return [...tracksMap.values()];
   }
 
-  return [...new Set(selectedPlaylists.flatMap((p) => p.trackIds))].map((trackId) =>
-    tracksMap.get(trackId)
+  const uniqueTrackIdsForPlaylists = new Set(
+    selectedPlaylists.flatMap((p) => trackIdsByPlaylistIdMap.get(p.id))
   );
+  const uniqueTracks: Track[] = [];
+
+  for (const trackId of uniqueTrackIdsForPlaylists) {
+    const track = tracksMap.get(trackId);
+
+    if (!track) {
+      console.warn('No track found for track with Id: ' + trackId);
+    } else {
+      uniqueTracks.push(track);
+    }
+  }
+
+  return uniqueTracks;
 }
+
 function filterTracksForSearchTerm(tracks: Track[], searchTerm: string) {
   if (searchTerm === null) {
     return tracks;

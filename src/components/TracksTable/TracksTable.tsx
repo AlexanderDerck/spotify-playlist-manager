@@ -9,9 +9,14 @@ const { Text } = Typography;
 export interface TracksTableProps {
   tracks: Track[];
   playlists: Playlist[];
+  trackIdsByPlaylistIdMap: Map<string, string[]>;
 }
 
-export const TracksTable: React.FunctionComponent<TracksTableProps> = ({ tracks, playlists }) => {
+export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
+  tracks,
+  playlists,
+  trackIdsByPlaylistIdMap,
+}) => {
   const nameSorter = {
     compare: (a, b) => a.name.localeCompare(b.name),
     multiple: 1,
@@ -25,7 +30,8 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({ tracks,
     compare: (a, b) => a.album.name.localeCompare(b.album.name),
     multiple: 1,
   };
-  const playlistRenderer = (_, track: Track) => renderPlaylistTagsForTrack(track, playlists);
+  const playlistRenderer = (_, track: Track) =>
+    renderPlaylistTagsForTrack(track, playlists, trackIdsByPlaylistIdMap);
 
   return (
     <Table
@@ -66,8 +72,16 @@ function getArtistNames(track: Track): string {
   return track.artists.map((a) => a.name).join(', ');
 }
 
-function renderPlaylistTagsForTrack(track: Track, playlists: Playlist[]): React.ReactElement {
-  const playlistsForTrack = playlists.filter((p) => p.trackIds.includes(track.id));
+function renderPlaylistTagsForTrack(
+  track: Track,
+  playlists: Playlist[],
+  trackIdsByPlaylistIdMap: Map<string, string[]>
+): React.ReactElement {
+  const playlistsForTrack = playlists.filter((playlist) => {
+    const trackIdsForPlaylist = trackIdsByPlaylistIdMap.get(playlist.id);
+
+    return trackIdsForPlaylist && trackIdsForPlaylist.includes(track.id);
+  });
 
   return <PlaylistTags playlists={playlistsForTrack}></PlaylistTags>;
 }

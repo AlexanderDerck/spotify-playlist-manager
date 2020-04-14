@@ -9,7 +9,7 @@ import { changeSelectedPlaylistIds, loadPlaylists, searchSong } from '../../stor
 import { RootState } from '../../store/root-state';
 import {
     getFilteredTracksForTracksPage, getNumberOfPlaylistsWithTracksLoaded, getPlaylistsMap,
-    getSelectedPlaylists
+    getSelectedPlaylists, getTrackIdsByPlaylistIdMap
 } from '../../store/selectors';
 
 const { Title } = Typography;
@@ -22,6 +22,7 @@ interface StateProps {
   playlistsMap: Map<string, Playlist>;
   selectedPlaylists: Playlist[];
   tracks: Track[];
+  trackIdsByPlaylistIdMap: Map<string, string[]>;
   numberOfPlaylistsWithTracksLoaded: number;
 }
 interface DispatchProps {
@@ -95,7 +96,11 @@ export class TracksPage extends React.Component<TracksPageProps> {
           </Row>
           <Row>
             <Col>
-              <TracksTable tracks={this.props.tracks} playlists={playlists}></TracksTable>
+              <TracksTable
+                tracks={this.props.tracks}
+                playlists={playlists}
+                trackIdsByPlaylistIdMap={this.props.trackIdsByPlaylistIdMap}
+              ></TracksTable>
             </Col>
           </Row>
         </Space>
@@ -108,6 +113,7 @@ const mapState = (state: RootState): StateProps => ({
   playlistsMap: getPlaylistsMap(state),
   selectedPlaylists: getSelectedPlaylists(state),
   tracks: getFilteredTracksForTracksPage(state),
+  trackIdsByPlaylistIdMap: getTrackIdsByPlaylistIdMap(state),
   numberOfPlaylistsWithTracksLoaded: getNumberOfPlaylistsWithTracksLoaded(state),
 });
 const mapDispatch: (dispatch: Dispatch) => DispatchProps = (dispatch) => ({

@@ -1,11 +1,13 @@
 import {
-    loadAllTracksForPlaylist, loadAllTracksForPlaylistCompleted, TrackAction
+    loadAllTracksForPlaylist, loadAllTracksForPlaylistCompleted,
+    reduceBatchOfLoadedTracksForPlaylists, TrackAction
 } from '../actions';
 import {
-    changeSelectedPlaylistIds, loadPlaylistsSuccess, PlaylistAction
+    changeSelectedPlaylistIds, linkTracksToPlaylistsFromCacheSuccess, loadPlaylistsSuccess,
+    PlaylistAction
 } from '../actions/playlist.actions';
 import { initialPlaylistState, PlaylistState } from '../state/playlist.state';
-import { toStringMap } from '../utils';
+import { StringMap, toStringMap } from '../utils';
 
 export function playlistReducer(
   state = initialPlaylistState,
@@ -17,11 +19,11 @@ export function playlistReducer(
         ...state,
         playLists: {
           ...state.playLists,
-          ...toStringMap(action.payload.playLists, (p) => p.id),
+          ...toStringMap(action.payload.playlists, (p) => p.id),
         },
         playlistsTracksLoaded: {
           ...state.playlistsTracksLoaded,
-          ...action.payload.playLists.reduce(
+          ...action.payload.playlists.reduce(
             (map, playlist) => ({ ...map, [playlist.id]: false }),
             {}
           ),
@@ -36,19 +38,24 @@ export function playlistReducer(
         },
       };
     case loadAllTracksForPlaylistCompleted.type:
-      const playlistToUpdate = state.playLists[action.payload.playlistId];
       return {
         ...state,
-        playLists: {
-          ...state.playLists,
-          [action.payload.playlistId]: {
-            ...playlistToUpdate,
-            trackIds: [...playlistToUpdate.trackIds, ...action.payload.tracks.map((t) => t.id)],
-          },
+        trackIdsByPlaylistId: {
+          ...state.trackIdsByPlaylistId,
+          [action.payload.playlistId]: [...action.payload.tracks.map((t) => t.id)],
         },
         playlistsTracksLoaded: {
           ...state.playlistsTracksLoaded,
           [action.payload.playlistId]: true,
+        },
+      };
+    case reduceBatchOfLoadedTracksForPlaylists.type:
+      return reduceBatchOfLoadTracksForPlaylistResultsReducer(state, action);
+    case linkTracksToPlaylistsFromCacheSuccess.type:
+      return {
+        ...state,
+        trackIdsByPlaylistId: {
+          ...action.payload.trackIdsByPlaylistId,
         },
       };
     case changeSelectedPlaylistIds.type:
@@ -59,4 +66,26 @@ export function playlistReducer(
     default:
       return state;
   }
+}
+
+function reduceBatchOfLoadTracksForPlaylistResultsReducer(
+  state: PlaylistState,
+  action: ReturnType<typeof reduceBatchOfLoadedTracksForPlaylists>
+): PlaylistState {
+  const trackIdsByPlaylistIdMap: StringMap<string[]> = {};
+
+  for (const [playlistId, tracks] of Object.entries(action.payload.tracksByPlaylistId)) {
+    const trackIds = new Set(state.trackIdsByPlaylistId[playlistId] || []);
+
+    for (const track of tracks) {
+      trackIds.add(track.id);
+    }
+
+    trackIdsByPlaylistIdMap[playlistId] = [...trackIds.values()];
+  }
+
+  return {
+    ...state,
+    ...trackIdsByPlaylistIdMap,
+  };
 }

@@ -5,10 +5,12 @@ export interface PlaylistState {
   playLists: StringMap<Playlist>;
   playlistsTracksLoaded: StringMap<boolean>;
   selectedPlaylistIds: string[];
+  trackIdsByPlaylistId: StringMap<string[]>;
 }
 
 export const initialPlaylistState: PlaylistState = {
   playLists: {},
   playlistsTracksLoaded: {},
   selectedPlaylistIds: [],
+  trackIdsByPlaylistId: {},
 };

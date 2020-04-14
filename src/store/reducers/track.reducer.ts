@@ -1,17 +1,26 @@
-import { batchReduceLoadTracksForPlaylistTask, searchSong, TrackAction } from '../actions';
+import {
+    reduceBatchOfLoadedTracksForPlaylists, retrieveTracksFromCacheSuccess, searchSong, TrackAction
+} from '../actions';
 import { initialTrackState, TrackState } from '../state/track.state';
 import { toStringMap } from '../utils';
 
 export function trackReducer(state = initialTrackState, action: TrackAction): TrackState {
   switch (action.type) {
-    case batchReduceLoadTracksForPlaylistTask.type:
-      const updatedTracks = {
-        ...state.tracks,
-        ...toStringMap(action.payload.tracks, (t) => t.id),
-      };
+    case retrieveTracksFromCacheSuccess.type:
       return {
         ...state,
-        tracks: updatedTracks,
+        tracks: { ...state.tracks, ...action.payload.tracks },
+      };
+    case reduceBatchOfLoadedTracksForPlaylists.type:
+      return {
+        ...state,
+        tracks: {
+          ...state.tracks,
+          ...toStringMap(
+            Object.values(action.payload.tracksByPlaylistId).flatMap((tracks) => tracks),
+            (t) => t.id
+          ),
+        },
       };
     case searchSong.type:
       return {

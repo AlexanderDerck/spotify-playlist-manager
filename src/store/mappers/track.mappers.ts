@@ -1,6 +1,6 @@
-import { durationFromMilliseconds } from '../../functions';
 import { Track } from '../../models';
 import { PlaylistTrackObject } from '../../typings/spotify-api';
+import { durationFromMilliseconds } from '../../utils';
 import { mapToAlbum, mapToArtist } from './playlist.mappers';
 
 export function mapToTrack(trackResponse: PlaylistTrackObject): Track {

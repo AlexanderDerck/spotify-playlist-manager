@@ -34,3 +34,8 @@ export const getSelectedPlaylists = createSelector(
       )
       .filter((playlist) => playlist !== undefined)
 );
+
+export const getTrackIdsByPlaylistIdMap = createSelector(
+  getPlaylistState,
+  (state) => new Map(Object.entries(state.trackIdsByPlaylistId))
+);

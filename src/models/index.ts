@@ -1,5 +1,6 @@
 export * from './album';
 export * from './api-info';
+export * from './app-local-storage';
 export * from './artist';
 export * from './duration';
 export * from './load-tracks-for-playlist-error';

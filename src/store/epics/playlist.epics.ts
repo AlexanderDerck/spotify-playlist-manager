@@ -1,16 +1,20 @@
+import { Action } from 'redux';
 import { Epic, ofType } from 'redux-observable';
 import { forkJoin, Observable, of } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { environment } from '../../environment';
 import { ListOfCurrentUsersPlaylistsResponse } from '../../typings/spotify-api';
+import { getFromLocalStorage } from '../../utils';
 import {
-    loadAllTracksForAllPlaylists, loadPlaylists, loadPlaylistsError, loadPlaylistsSuccess,
-    PlaylistAction
+    linkTracksToPlaylistsFromCache, linkTracksToPlaylistsFromCacheNotFound,
+    linkTracksToPlaylistsFromCacheSuccess, loadAllTracksForAllPlaylists, loadPlaylists,
+    loadPlaylistsError, loadPlaylistsSuccess, PlaylistAction, retrieveTracksFromCache,
+    retrieveTracksFromCacheSuccess
 } from '../actions';
 import { mapToPlaylist } from '../mappers/playlist.mappers';
 import { RootState } from '../root-state';
-import { getBearerToken } from '../selectors';
+import { getBearerToken, getTracksMap } from '../selectors';
 
 export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> = (
   actions$,
@@ -35,7 +39,7 @@ export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> =
           return forkJoin(loadPlaylistsObservables);
         }),
         map((responses) =>
-          loadPlaylistsSuccess({ playLists: responses.flatMap((r) => r.items).map(mapToPlaylist) })
+          loadPlaylistsSuccess({ playlists: responses.flatMap((r) => r.items).map(mapToPlaylist) })
         ),
         catchError((error) => of(loadPlaylistsError({ error })))
       )
@@ -45,6 +49,44 @@ export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> =
 export const loadPlaylistsSuccessEpic: Epic = (actions$) =>
   actions$.pipe(
     ofType(loadPlaylistsSuccess.type),
+    map((_) => retrieveTracksFromCache())
+  );
+
+export const retrieveTracksFromCacheSuccessEpic: Epic = (actions$) =>
+  actions$.pipe(
+    ofType(retrieveTracksFromCacheSuccess),
+    map((_) => linkTracksToPlaylistsFromCache())
+  );
+
+export const linkTracksToPlaylistsFromCacheEpic: Epic<Action, Action, RootState> = (
+  actions$,
+  store$
+) =>
+  actions$.pipe(
+    ofType(linkTracksToPlaylistsFromCache),
+    withLatestFrom(store$.pipe(map(getTracksMap))),
+    switchMap(([_, tracksMap]) => {
+      const trackIdsByPlaylistId = getFromLocalStorage('trackIdsByPlaylistId');
+
+      if (trackIdsByPlaylistId === null) {
+        return [linkTracksToPlaylistsFromCacheNotFound(), loadAllTracksForAllPlaylists()];
+      }
+
+      if (
+        Object.values(trackIdsByPlaylistId)
+          .flatMap((ids) => ids)
+          .some((id) => !tracksMap.has(id))
+      ) {
+        return [linkTracksToPlaylistsFromCacheNotFound(), loadAllTracksForAllPlaylists()];
+      }
+
+      return [linkTracksToPlaylistsFromCacheSuccess({ trackIdsByPlaylistId })];
+    })
+  );
+
+export const loadAllPlaylistTracksWhenCacheFailedEpic: Epic = (action$) =>
+  action$.pipe(
+    ofType(linkTracksToPlaylistsFromCacheNotFound.type),
     map((_) => loadAllTracksForAllPlaylists())
   );
 

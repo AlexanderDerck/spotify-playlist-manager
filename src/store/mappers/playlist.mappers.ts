@@ -10,7 +10,6 @@ export function mapToPlaylist(playlistResponse: PlaylistObjectSimplified): Playl
     ownerUserId: playlistResponse.owner.id,
     totalTracks: playlistResponse.tracks.total,
     images: playlistResponse.images.map(mapToImage),
-    trackIds: [],
   };
 }
 

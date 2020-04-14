@@ -3,7 +3,8 @@ import createSagaMiddleware from 'redux-saga';
 import { Action, configureStore, getDefaultMiddleware, PayloadAction } from '@reduxjs/toolkit';
 import { environment } from '../environment';
 import {
-    batchReduceLoadTracksForPlaylistTask, queueLoadTracksForPlaylistTask, RootAction,
+    loadAllTracksForPlaylistCompleted, queueLoadTracksForPlaylistTask,
+    reduceBatchOfLoadedTracksForPlaylists, retrieveTracksFromCacheSuccess, RootAction,
     runLoadTracksForPlaylistTask, runLoadTracksForPlaylistTaskCompleted,
     runLoadTracksForPlaylistTaskErrored
 } from './actions';
@@ -61,11 +62,30 @@ function actionSanitizer(action: RootAction & PayloadAction<any>): PayloadAction
     };
   }
 
-  if (action.type === batchReduceLoadTracksForPlaylistTask.type) {
+  if (action.type === loadAllTracksForPlaylistCompleted.type) {
     return {
-      type: batchReduceLoadTracksForPlaylistTask.type,
+      type: loadAllTracksForPlaylistCompleted.type,
+      payload: {
+        playlistId: action.payload.playlistId,
+        tracksLength: action.payload.tracks.length,
+      },
+    };
+  }
+
+  if (action.type === retrieveTracksFromCacheSuccess.type) {
+    return {
+      type: retrieveTracksFromCacheSuccess.type,
       payload: {
         tracksLength: action.payload.tracks.length,
+      },
+    };
+  }
+
+  if (action.type === reduceBatchOfLoadedTracksForPlaylists.type) {
+    return {
+      type: reduceBatchOfLoadedTracksForPlaylists.type,
+      payload: {
+        tracksLength: Object.keys(action.payload.tracksByPlaylistId).length,
       },
     };
   }
