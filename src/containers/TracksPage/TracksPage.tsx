@@ -1,17 +1,19 @@
-import { Col, Row, Select, Space, Typography } from 'antd';
+import { Col, Input, Row, Select, Space, Typography } from 'antd';
+import { debounce } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 import { TracksTable } from '../../components';
 import { Playlist, Track } from '../../models';
-import { changeSelectedPlaylistIds, loadPlaylists } from '../../store/actions';
+import { changeSelectedPlaylistIds, loadPlaylists, searchSong } from '../../store/actions';
 import { RootState } from '../../store/root-state';
 import {
-    getFilteredTracksForSelectedPlaylistIds, getPlaylistsMap, getSelectedPlaylists
+    getFilteredTracksForTracksPage, getPlaylistsMap, getSelectedPlaylists
 } from '../../store/selectors';
 
 const { Title } = Typography;
 const { Option } = Select;
+const { Search } = Input;
 
 export interface TracksPageProps extends StateProps, DispatchProps {}
 
@@ -23,16 +25,21 @@ interface StateProps {
 interface DispatchProps {
   loadPlaylists(): void;
   changeSelectedPlaylistIds(playlistIds: string[]): void;
+  search(searchTerm: string): void;
 }
 
 export class TracksPage extends React.Component<TracksPageProps> {
   loadPlaylists: () => void;
   changeSelectedPlaylistIds: (playlistIds: string[]) => void;
+  search: (event: React.ChangeEvent<HTMLInputElement>) => void;
 
   constructor(props: TracksPageProps) {
     super(props);
     this.loadPlaylists = props.loadPlaylists.bind(this);
     this.changeSelectedPlaylistIds = props.changeSelectedPlaylistIds.bind(this);
+
+    const debouncedSearch = debounce(this.props.search, 300);
+    this.search = (e) => debouncedSearch(e.target.value);
   }
 
   componentDidMount() {
@@ -55,6 +62,7 @@ export class TracksPage extends React.Component<TracksPageProps> {
         <Space direction="vertical" size="large">
           <Row>
             <Col span={12}>
+              <label>Playlists</label>
               <Select
                 value={this.props.selectedPlaylists.map((p) => p.id)}
                 onChange={(e) => this.changeSelectedPlaylistIds(e.filter((id) => !!id))}
@@ -66,6 +74,12 @@ export class TracksPage extends React.Component<TracksPageProps> {
               >
                 {playlistOptions}
               </Select>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <label>Songs</label>
+              <Search onChange={(e) => this.search(e)} placeholder="Search songs" size="large" />
             </Col>
           </Row>
           <Row>
@@ -82,11 +96,12 @@ export class TracksPage extends React.Component<TracksPageProps> {
 const mapState = (state: RootState): StateProps => ({
   playlistsMap: getPlaylistsMap(state),
   selectedPlaylists: getSelectedPlaylists(state),
-  tracks: getFilteredTracksForSelectedPlaylistIds(state),
+  tracks: getFilteredTracksForTracksPage(state),
 });
 const mapDispatch: (dispatch: Dispatch) => DispatchProps = (dispatch) => ({
   loadPlaylists: () => dispatch(loadPlaylists()),
   changeSelectedPlaylistIds: (selectedPlaylistIds: string[]) =>
     dispatch(changeSelectedPlaylistIds({ playlistIds: selectedPlaylistIds })),
+  search: (searchTerm: string) => dispatch(searchSong({ searchTerm })),
 });
 export default connect(mapState, mapDispatch)(TracksPage);

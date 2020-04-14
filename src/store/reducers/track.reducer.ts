@@ -1,4 +1,4 @@
-import { runLoadTracksForPlaylistTaskCompleted, TrackAction } from '../actions';
+import { runLoadTracksForPlaylistTaskCompleted, searchSong, TrackAction } from '../actions';
 import { initialTrackState, TrackState } from '../state/track.state';
 import { toStringMap } from '../utils';
 
@@ -12,6 +12,11 @@ export function trackReducer(state = initialTrackState, action: TrackAction): Tr
       return {
         ...state,
         tracks: updatedTracks,
+      };
+    case searchSong.type:
+      return {
+        ...state,
+        searchTerm: action.payload.searchTerm,
       };
 
     default:

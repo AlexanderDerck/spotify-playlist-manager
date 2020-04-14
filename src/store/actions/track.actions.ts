@@ -19,6 +19,7 @@ export const runLoadTracksForPlaylistTaskErrored = createAction(
   '[Track] Run LoadTracksForPlaylistTask errored',
   props<LoadTracksForPlaylistTask & { error: string }>()
 );
+export const searchSong = createAction('[Track] Search song', props<{ searchTerm: string }>());
 
 const actionCreatorMap = {
   loadAllTracksForAllPlaylists,
@@ -29,6 +30,7 @@ const actionCreatorMap = {
   runLoadTracksForPlaylistTask,
   runLoadTracksForPlaylistTaskCompleted,
   runLoadTracksForPlaylistTaskErrored,
+  searchSong,
 };
 const all = actionTypes(actionCreatorMap);
 export type TrackAction = typeof all;
