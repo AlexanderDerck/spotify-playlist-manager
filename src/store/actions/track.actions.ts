@@ -6,7 +6,10 @@ import {
 import { actionTypes, props, StringMap } from '../utils';
 
 export const retrieveTracksFromCache = createAction('[Track] Retrieve tracks from cache');
-export const retrieveTracksFromCacheSuccess = createAction('[Track] Retrieve tracks from cache success', props<{ tracks: StringMap<Track> }>());
+export const retrieveTracksFromCacheSuccess = createAction(
+  '[Track] Retrieve tracks from cache success',
+  props<{ tracks: StringMap<Track>; elapsed: Duration }>()
+);
 export const retrieveTracksFromCacheNotFound = createAction('[Track] Retrieve tracks from cache not found');
 export const loadAllTracksForAllPlaylists = createAction('[Track] Load all tracks for all playlists');
 export const loadAllTracksForAllPlaylistsCompleted = createAction(

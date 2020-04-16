@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
-import { Playlist } from '../../models';
+import { Duration, Playlist } from '../../models';
 import { actionTypes, createErrorAction, props, StringMap } from '../utils';
 
 export const loadPlaylists = createAction('[Playlist] Load playlists');
@@ -8,7 +8,7 @@ export const loadPlaylistsError = createErrorAction('[Playlist] Load playlists e
 export const linkTracksToPlaylistsFromCache = createAction('[Playlist] Link tracks to playlists from cache');
 export const linkTracksToPlaylistsFromCacheSuccess = createAction(
   '[Playlist] Link tracks to playlists from cache success',
-  props<{ trackIdsByPlaylistId: StringMap<string[]> }>()
+  props<{ trackIdsByPlaylistId: StringMap<string[]>; elapsed: Duration }>()
 );
 export const linkTracksToPlaylistsFromCacheNotFound = createAction('[Playlist] Link tracks to playlists from cache not found');
 export const changeSelectedPlaylistIds = createAction('[Playlist] Change selectedPlaylistIds', props<{ playlistIds: string[] }>());

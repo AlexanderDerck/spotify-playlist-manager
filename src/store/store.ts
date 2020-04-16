@@ -76,7 +76,8 @@ function actionSanitizer(action: RootAction & PayloadAction<any>): PayloadAction
     return {
       type: retrieveTracksFromCacheSuccess.type,
       payload: {
-        tracksLength: action.payload.tracks.length,
+        elapsed: action.payload.elapsed,
+        tracksLength: Object.keys(action.payload.tracks).length,
       },
     };
   }

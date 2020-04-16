@@ -1,3 +1,4 @@
+import { differenceInMilliseconds } from 'date-fns';
 import { Action } from 'redux';
 import { Epic, ofType } from 'redux-observable';
 import { forkJoin, Observable, of } from 'rxjs';
@@ -5,7 +6,7 @@ import { ajax } from 'rxjs/ajax';
 import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { environment } from '../../environment';
 import { ListOfCurrentUsersPlaylistsResponse } from '../../typings/spotify-api';
-import { getFromLocalStorage } from '../../utils';
+import { durationFromMilliseconds, getFromLocalStorage } from '../../utils';
 import {
     linkTracksToPlaylistsFromCache, linkTracksToPlaylistsFromCacheNotFound,
     linkTracksToPlaylistsFromCacheSuccess, loadAllTracksForAllPlaylists, loadPlaylists,
@@ -66,6 +67,7 @@ export const linkTracksToPlaylistsFromCacheEpic: Epic<Action, Action, RootState>
     ofType(linkTracksToPlaylistsFromCache),
     withLatestFrom(store$.pipe(map(getTracksMap))),
     switchMap(([_, tracksMap]) => {
+      const startTime = new Date();
       const trackIdsByPlaylistId = getFromLocalStorage('trackIdsByPlaylistId');
 
       if (trackIdsByPlaylistId === null) {
@@ -80,7 +82,9 @@ export const linkTracksToPlaylistsFromCacheEpic: Epic<Action, Action, RootState>
         return [linkTracksToPlaylistsFromCacheNotFound(), loadAllTracksForAllPlaylists()];
       }
 
-      return [linkTracksToPlaylistsFromCacheSuccess({ trackIdsByPlaylistId })];
+      const elapsed = durationFromMilliseconds(differenceInMilliseconds(new Date(), startTime));
+
+      return [linkTracksToPlaylistsFromCacheSuccess({ trackIdsByPlaylistId, elapsed })];
     })
   );
 
