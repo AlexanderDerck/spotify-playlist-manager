@@ -1,7 +1,7 @@
 import { Table, Typography } from 'antd';
 import Column from 'antd/lib/table/Column';
 import * as React from 'react';
-import { Playlist, Track } from '../../models';
+import { Duration, Playlist, Track } from '../../models';
 import { PlaylistTags } from '../PlaylistTags/PlaylistTags';
 
 const { Text } = Typography;
@@ -28,6 +28,10 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
   const artistRenderer = (text, track: Track) => <Text>{getArtistNames(track)}</Text>;
   const albumSorter = {
     compare: (a, b) => a.album.name.localeCompare(b.album.name),
+    multiple: 1,
+  };
+  const durationSorter = {
+    compare: sortDuration,
     multiple: 1,
   };
   const playlistRenderer = (_, track: Track) =>
@@ -63,6 +67,13 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
         filterMultiple={false}
         sorter={albumSorter}
       ></Column>
+      <Column
+        title="Duration"
+        dataIndex="duration"
+        key="duration"
+        sorter={durationSorter}
+        render={renderDuration}
+      ></Column>
       <Column key="playlists" render={playlistRenderer}></Column>
     </Table>
   );
@@ -70,6 +81,38 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
 
 function getArtistNames(track: Track): string {
   return track.artists.map((a) => a.name).join(', ');
+}
+
+function sortDuration(duration1: Duration, duration2: Duration): number {
+  if (duration1.hours > duration2.hours) {
+    return 1;
+  } else if (duration1.hours < duration2.hours) {
+    return -1;
+  }
+
+  if (duration1.minutes > duration2.minutes) {
+    return 1;
+  } else if (duration1.minutes < duration2.minutes) {
+    return -1;
+  }
+
+  if (duration1.seconds > duration2.seconds) {
+    return 1;
+  } else if (duration1.seconds < duration2.seconds) {
+    return -1;
+  }
+
+  return 0;
+}
+
+function renderDuration(duration: Duration): string {
+  if (duration.hours) {
+    return `${duration.hours}:${duration.minutes
+      .toString()
+      .padStart(2, '0')}:${duration.seconds.toString().padStart(2, '0')}`;
+  }
+
+  return `${duration.minutes}:${duration.seconds.toString().padStart(2, '0')}`;
 }
 
 function renderPlaylistTagsForTrack(

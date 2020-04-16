@@ -27,7 +27,7 @@ export default function App() {
           </Sider>
           <Content className="py-4">
             <Row justify="center">
-              <Col span={20}>
+              <Col span={22}>
                 <Switch>
                   <PrivateRoute exact path="/">
                     <TracksPage></TracksPage>
