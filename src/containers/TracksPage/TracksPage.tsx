@@ -33,9 +33,9 @@ interface DispatchProps {
 }
 
 export class TracksPage extends React.Component<TracksPageProps> {
-  loadPlaylists: () => void;
-  changeSelectedPlaylistIds: (playlistIds: string[]) => void;
-  search: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  private readonly loadPlaylists: () => void;
+  private readonly changeSelectedPlaylistIds: (playlistIds: string[]) => void;
+  private readonly search: (event: React.ChangeEvent<HTMLInputElement>) => void;
 
   constructor(props: TracksPageProps) {
     super(props);
@@ -62,12 +62,12 @@ export class TracksPage extends React.Component<TracksPageProps> {
 
     return (
       <React.Fragment>
-        {this.props.arePlaylistsLoading && (
-          <LoadPlaylistsProgress
-            loadedPlaylists={this.props.numberOfPlaylistsWithTracksLoaded}
-            totalPlaylists={playlists.length}
-          ></LoadPlaylistsProgress>
-        )}
+        <LoadPlaylistsProgress
+          showProgress={this.props.arePlaylistsLoading}
+          delay={2000}
+          loadedPlaylists={this.props.numberOfPlaylistsWithTracksLoaded}
+          totalPlaylists={playlists.length}
+        ></LoadPlaylistsProgress>
 
         <Title level={2}>Tracks</Title>
         <Space direction="vertical">

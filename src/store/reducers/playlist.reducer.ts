@@ -22,7 +22,7 @@ export function playlistReducer(
           ...toStringMap(action.payload.playlists, (p) => p.id),
         },
         playlistsTracksLoaded: {
-          ...state.playlistsTracksLoaded,
+          ...(state.playlistsTracksLoaded || {}),
           ...action.payload.playlists.reduce(
             (map, playlist) => ({ ...map, [playlist.id]: false }),
             {}
@@ -33,7 +33,7 @@ export function playlistReducer(
       return {
         ...state,
         playlistsTracksLoaded: {
-          ...state.playlistsTracksLoaded,
+          ...(state.playlistsTracksLoaded || {}),
           [action.payload.playlistId]: false,
         },
       };

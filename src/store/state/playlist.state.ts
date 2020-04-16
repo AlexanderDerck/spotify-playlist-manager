@@ -10,7 +10,7 @@ export interface PlaylistState {
 
 export const initialPlaylistState: PlaylistState = {
   playLists: {},
-  playlistsTracksLoaded: {},
+  playlistsTracksLoaded: null,
   selectedPlaylistIds: [],
   trackIdsByPlaylistId: {},
 };
