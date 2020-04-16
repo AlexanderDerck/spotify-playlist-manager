@@ -40,10 +40,6 @@ export function playlistReducer(
     case loadAllTracksForPlaylistCompleted.type:
       return {
         ...state,
-        trackIdsByPlaylistId: {
-          ...state.trackIdsByPlaylistId,
-          [action.payload.playlistId]: [...action.payload.tracks.map((t) => t.id)],
-        },
         playlistsTracksLoaded: {
           ...state.playlistsTracksLoaded,
           [action.payload.playlistId]: true,
@@ -86,6 +82,9 @@ function reduceBatchOfLoadTracksForPlaylistResultsReducer(
 
   return {
     ...state,
-    ...trackIdsByPlaylistIdMap,
+    trackIdsByPlaylistId: {
+      ...state.trackIdsByPlaylistId,
+      ...trackIdsByPlaylistIdMap,
+    },
   };
 }
