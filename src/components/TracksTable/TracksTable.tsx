@@ -2,6 +2,7 @@ import { Table, Typography } from 'antd';
 import Column from 'antd/lib/table/Column';
 import * as React from 'react';
 import { Duration, Playlist, Track } from '../../models';
+import { millisecondsFromDuration } from '../../utils';
 import { PlaylistTags } from '../PlaylistTags/PlaylistTags';
 
 const { Text } = Typography;
@@ -31,7 +32,7 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
     multiple: 1,
   };
   const durationSorter = {
-    compare: sortDuration,
+    compare: (a, b) => millisecondsFromDuration(a.duration) - millisecondsFromDuration(b.duration),
     multiple: 1,
   };
   const playlistRenderer = (_, track: Track) =>
@@ -49,24 +50,11 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
         title="Name"
         dataIndex="name"
         key="name"
-        filterMultiple={false}
         sorter={nameSorter}
         defaultSortOrder="ascend"
       ></Column>
-      <Column
-        title="Artist"
-        key="artist"
-        filterMultiple={false}
-        sorter={artistSorter}
-        render={artistRenderer}
-      ></Column>
-      <Column
-        title="Album"
-        dataIndex={['album', 'name']}
-        key="album"
-        filterMultiple={false}
-        sorter={albumSorter}
-      ></Column>
+      <Column title="Artist" key="artist" sorter={artistSorter} render={artistRenderer}></Column>
+      <Column title="Album" dataIndex={['album', 'name']} key="album" sorter={albumSorter}></Column>
       <Column
         title="Duration"
         dataIndex="duration"
@@ -81,28 +69,6 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
 
 function getArtistNames(track: Track): string {
   return track.artists.map((a) => a.name).join(', ');
-}
-
-function sortDuration(duration1: Duration, duration2: Duration): number {
-  if (duration1.hours > duration2.hours) {
-    return 1;
-  } else if (duration1.hours < duration2.hours) {
-    return -1;
-  }
-
-  if (duration1.minutes > duration2.minutes) {
-    return 1;
-  } else if (duration1.minutes < duration2.minutes) {
-    return -1;
-  }
-
-  if (duration1.seconds > duration2.seconds) {
-    return 1;
-  } else if (duration1.seconds < duration2.seconds) {
-    return -1;
-  }
-
-  return 0;
 }
 
 function renderDuration(duration: Duration): string {
