@@ -9,7 +9,7 @@ const { Title } = Typography;
 export const PageHeader: React.FunctionComponent<PageHeaderProps> = () => (
   <Row align="middle">
     <Col>
-      <img width="200px" src="/Spotify_Logo_RGB_Green.png" alt="logo" />
+      <img width="200px" src={`${process.env.PUBLIC_URL}/Spotify_Logo_RGB_Green.png`} alt="logo" />
     </Col>
     <Col>
       <Title level={1} className={styles.title}>

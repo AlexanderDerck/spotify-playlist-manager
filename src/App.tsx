@@ -10,7 +10,7 @@ const { Item } = Menu;
 
 export default function App() {
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <Layout className={styles.pageHeight}>
         <Header>
           <PageHeader></PageHeader>

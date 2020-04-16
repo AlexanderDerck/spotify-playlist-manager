@@ -39,7 +39,9 @@ export const authorizeEpic: Epic<UserAction, any> = (action$) =>
       const queryParams = new URLSearchParams({
         client_id: '17df0cd526354633a5ab47045e8efa8c',
         response_type: 'token',
-        redirect_uri: 'https://172.20.10.2:3000',
+        redirect_uri: window.location.origin.includes('localhost')
+          ? 'https://10.63.1.202:3000' + process.env.PUBLIC_URL
+          : window.location.origin + process.env.PUBLIC_URL,
         scope:
           'playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private',
       });
