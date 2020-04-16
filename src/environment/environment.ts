@@ -3,4 +3,5 @@ export const environment = {
   GetTracksPagingLimit: 100,
   ConcurrentRequestLimit: 5,
   EnableTracing: false,
+  EnableLocalCache: false,
 };

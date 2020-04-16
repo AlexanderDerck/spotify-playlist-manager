@@ -50,13 +50,19 @@ export const loadPlaylistEpic: Epic<PlaylistAction, PlaylistAction, RootState> =
 export const loadPlaylistsSuccessEpic: Epic = (actions$) =>
   actions$.pipe(
     ofType(loadPlaylistsSuccess.type),
-    map((_) => retrieveTracksFromCache())
+    map((_) =>
+      environment.EnableLocalCache ? retrieveTracksFromCache() : loadAllTracksForAllPlaylists()
+    )
   );
 
 export const retrieveTracksFromCacheSuccessEpic: Epic = (actions$) =>
   actions$.pipe(
     ofType(retrieveTracksFromCacheSuccess),
-    map((_) => linkTracksToPlaylistsFromCache())
+    map((_) =>
+      environment.EnableLocalCache
+        ? linkTracksToPlaylistsFromCache()
+        : loadAllTracksForAllPlaylists()
+    )
   );
 
 export const linkTracksToPlaylistsFromCacheEpic: Epic<Action, Action, RootState> = (
