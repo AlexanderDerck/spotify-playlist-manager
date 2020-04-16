@@ -27,6 +27,10 @@ export class LoadPlaylistsProgress extends React.Component<
     this.state = { showProgress: false };
   }
 
+  componentDidUpdate() {
+    this.props.showProgress ? this.showProgress() : this.hideProgress();
+  }
+
   showProgress(): void {
     if (!this.state.showProgress) {
       this.setState({ showProgress: true });
@@ -46,8 +50,6 @@ export class LoadPlaylistsProgress extends React.Component<
   }
 
   render() {
-    this.props.showProgress ? this.showProgress() : this.hideProgress();
-
     if (!this.state.showProgress) {
       return null;
     }
