@@ -13,6 +13,10 @@ export const getPlaylists = createSelector(getPlaylistsMap, (playlistsMap) => [
   ...playlistsMap.values(),
 ]);
 
+export const getArePlaylistsLoading = createSelector(getPlaylistState, (state) =>
+  Object.values(state.playlistsTracksLoaded).some((loaded) => loaded)
+);
+
 export const getNumberOfPlaylistsWithTracksLoaded = createSelector(
   getPlaylistState,
   (state) => Object.values(state.playlistsTracksLoaded).filter((loaded) => loaded).length

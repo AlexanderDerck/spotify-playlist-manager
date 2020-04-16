@@ -8,8 +8,8 @@ import { Playlist, Track } from '../../models';
 import { changeSelectedPlaylistIds, loadPlaylists, searchSong } from '../../store/actions';
 import { RootState } from '../../store/root-state';
 import {
-    getFilteredTracksForTracksPage, getNumberOfPlaylistsWithTracksLoaded, getPlaylistsMap,
-    getSelectedPlaylists, getTrackIdsByPlaylistIdMap
+    getArePlaylistsLoading, getFilteredTracksForTracksPage, getNumberOfPlaylistsWithTracksLoaded,
+    getPlaylistsMap, getSelectedPlaylists, getTrackIdsByPlaylistIdMap
 } from '../../store/selectors';
 
 const { Title } = Typography;
@@ -23,6 +23,7 @@ interface StateProps {
   selectedPlaylists: Playlist[];
   tracks: Track[];
   trackIdsByPlaylistIdMap: Map<string, string[]>;
+  arePlaylistsLoading: boolean;
   numberOfPlaylistsWithTracksLoaded: number;
 }
 interface DispatchProps {
@@ -51,8 +52,6 @@ export class TracksPage extends React.Component<TracksPageProps> {
 
   render() {
     const playlists = [...this.props.playlistsMap.values()];
-    const showProgress =
-      playlists.length > 0 && this.props.numberOfPlaylistsWithTracksLoaded < playlists.length;
     const playlistOptions = playlists.map((playlist) => (
       <Option value={playlist.id} key={playlist.id}>
         {playlist.name}
@@ -63,7 +62,7 @@ export class TracksPage extends React.Component<TracksPageProps> {
 
     return (
       <React.Fragment>
-        {showProgress && (
+        {this.props.arePlaylistsLoading && (
           <LoadPlaylistsProgress
             loadedPlaylists={this.props.numberOfPlaylistsWithTracksLoaded}
             totalPlaylists={playlists.length}
@@ -114,6 +113,7 @@ const mapState = (state: RootState): StateProps => ({
   selectedPlaylists: getSelectedPlaylists(state),
   tracks: getFilteredTracksForTracksPage(state),
   trackIdsByPlaylistIdMap: getTrackIdsByPlaylistIdMap(state),
+  arePlaylistsLoading: getArePlaylistsLoading(state),
   numberOfPlaylistsWithTracksLoaded: getNumberOfPlaylistsWithTracksLoaded(state),
 });
 const mapDispatch: (dispatch: Dispatch) => DispatchProps = (dispatch) => ({
