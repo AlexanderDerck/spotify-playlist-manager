@@ -18,23 +18,7 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
   playlists,
   trackIdsByPlaylistIdMap,
 }) => {
-  const nameSorter = {
-    compare: (a, b) => a.name.localeCompare(b.name),
-    multiple: 1,
-  };
-  const artistSorter = {
-    compare: (a, b) => getArtistNames(a).localeCompare(getArtistNames(b)),
-    multiple: 1,
-  };
-  const artistRenderer = (text, track: Track) => <Text>{getArtistNames(track)}</Text>;
-  const albumSorter = {
-    compare: (a, b) => a.album.name.localeCompare(b.album.name),
-    multiple: 1,
-  };
-  const durationSorter = {
-    compare: (a, b) => millisecondsFromDuration(a.duration) - millisecondsFromDuration(b.duration),
-    multiple: 1,
-  };
+  const artistRenderer = (_, track: Track) => <Text>{getArtistNames(track)}</Text>;
   const playlistRenderer = (_, track: Track) =>
     renderPlaylistTagsForTrack(track, playlists, trackIdsByPlaylistIdMap);
 
@@ -50,16 +34,28 @@ export const TracksTable: React.FunctionComponent<TracksTableProps> = ({
         title="Name"
         dataIndex="name"
         key="name"
-        sorter={nameSorter}
+        sorter={(a: Track, b: Track) => a.name.localeCompare(b.name)}
         defaultSortOrder="ascend"
       ></Column>
-      <Column title="Artist" key="artist" sorter={artistSorter} render={artistRenderer}></Column>
-      <Column title="Album" dataIndex={['album', 'name']} key="album" sorter={albumSorter}></Column>
+      <Column
+        title="Artist"
+        key="artist"
+        sorter={(a: Track, b: Track) => getArtistNames(a).localeCompare(getArtistNames(b))}
+        render={artistRenderer}
+      ></Column>
+      <Column
+        title="Album"
+        dataIndex={['album', 'name']}
+        key="album"
+        sorter={(a: Track, b: Track) => a.album.name.localeCompare(b.album.name)}
+      ></Column>
       <Column
         title="Duration"
         dataIndex="duration"
         key="duration"
-        sorter={durationSorter}
+        sorter={(a: Track, b: Track) =>
+          millisecondsFromDuration(a.duration) - millisecondsFromDuration(b.duration)
+        }
         render={renderDuration}
       ></Column>
       <Column key="playlists" render={playlistRenderer}></Column>
