@@ -21,8 +21,10 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    Contents: 'build' ## update to match what you want to copy
+    SourceFolder: \build
+    Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    CleanTargetFolder: true
 
 - task: PublishBuildArtifacts@1
   inputs: 
